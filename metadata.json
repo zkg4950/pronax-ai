@@ -1,0 +1,10 @@
+{
+  "name": "Remix Stonic AI - Sci-Fi Desktop Intelligence",
+  "description": "Futuristic command center and AI intelligence dashboard inspired by Stonic AI, featuring SAT-LINK tactical feed, 3D Neural Brain Orb, Agent Town pixel office, and voice intelligence console.",
+  "requestFramePermissions": [
+    "microphone"
+  ],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}
