@@ -316,65 +316,106 @@ export default function App() {
       ref={containerRef}
       className="fixed inset-0 w-screen h-screen max-w-screen max-h-screen overflow-hidden box-border p-1 bg-[#02070e] text-[#dcf4fb] flex flex-col font-sans select-none"
     >
-      {/* Mobile / Compact Navigation Tabs */}
-      {isCompactScreen && (
-        <div className="flex items-center justify-around py-1 px-2 border-b border-cyan-500/30 bg-[#04121d] shrink-0 mb-1 rounded-md text-[10px] font-mono-tech">
+      {/* Top Header Navigation Tabs Matching Reference Image */}
+      <div className="flex items-center justify-between px-3 py-1.5 border-b border-cyan-500/30 bg-[#030d17]/95 shrink-0 mb-1 rounded-lg text-xs font-mono-tech shadow-[0_0_20px_rgba(0,240,255,0.06)] z-40">
+        <div className="flex items-center gap-2">
+          <span className="w-2 h-2 rounded-full bg-cyan-400 shadow-[0_0_10px_#00f0ff] animate-pulse" />
+          <span className="font-bold tracking-widest text-cyan-200 hidden sm:inline">STONIC AI</span>
+          <span className="text-[10px] px-1.5 py-0.5 rounded bg-cyan-500/10 text-cyan-400 border border-cyan-500/30 hidden md:inline">
+            v4.2 PRO
+          </span>
+        </div>
+
+        {/* Center Navigation Tabs (Matching Image 1: SAT-LINK, NEURAL CORE, AGENTS 3D, VOICE) */}
+        <div className="flex items-center gap-1 sm:gap-2">
           <button
-            onClick={() => setActiveMobileTab('satlink')}
-            className={`flex items-center gap-1 px-2.5 py-1 rounded transition-colors ${
-              activeMobileTab === 'satlink'
-                ? 'bg-cyan-500/30 text-cyan-200 border border-cyan-400 font-bold'
-                : 'text-cyan-500'
+            onClick={() => {
+              setMaximizedPanel('left');
+              setActiveMobileTab('satlink');
+            }}
+            className={`flex items-center gap-1.5 px-3 py-1 rounded-md transition-all cursor-pointer font-bold ${
+              maximizedPanel === 'left' || (!maximizedPanel && activeMobileTab === 'satlink' && isCompactScreen)
+                ? 'bg-cyan-500/30 text-cyan-100 border border-cyan-400 shadow-[0_0_12px_rgba(0,240,255,0.4)]'
+                : 'text-cyan-400/80 hover:text-cyan-200 hover:bg-cyan-950/40'
             }`}
           >
-            <Satellite className="w-3 h-3" />
-            <span>SAT-LINK</span>
+            <Satellite className="w-3.5 h-3.5 text-cyan-400" />
+            <span className="tracking-wider">SAT-LINK</span>
           </button>
+
           <button
-            onClick={() => setActiveMobileTab('neural')}
-            className={`flex items-center gap-1 px-2.5 py-1 rounded transition-colors ${
-              activeMobileTab === 'neural'
-                ? 'bg-cyan-500/30 text-cyan-200 border border-cyan-400 font-bold'
-                : 'text-cyan-500'
+            onClick={() => {
+              setMaximizedPanel('neural');
+              setActiveMobileTab('neural');
+            }}
+            className={`flex items-center gap-1.5 px-3 py-1 rounded-md transition-all cursor-pointer font-bold ${
+              maximizedPanel === 'neural' || (!maximizedPanel && activeMobileTab === 'neural' && isCompactScreen)
+                ? 'bg-cyan-500/30 text-cyan-100 border border-cyan-400 shadow-[0_0_12px_rgba(0,240,255,0.4)]'
+                : 'text-cyan-400/80 hover:text-cyan-200 hover:bg-cyan-950/40'
             }`}
           >
-            <Bot className="w-3 h-3" />
-            <span>NEURAL CORE</span>
+            <Bot className="w-3.5 h-3.5 text-cyan-400" />
+            <span className="tracking-wider">NEURAL CORE</span>
           </button>
+
           <button
-            onClick={() => setActiveMobileTab('agents')}
-            className={`flex items-center gap-1 px-2.5 py-1 rounded transition-colors ${
-              activeMobileTab === 'agents'
-                ? 'bg-cyan-500/30 text-cyan-200 border border-cyan-400 font-bold'
-                : 'text-cyan-500'
+            onClick={() => {
+              setMaximizedPanel('agents');
+              setActiveMobileTab('agents');
+            }}
+            className={`flex items-center gap-1.5 px-3 py-1 rounded-md transition-all cursor-pointer font-bold ${
+              maximizedPanel === 'agents' || (!maximizedPanel && activeMobileTab === 'agents' && isCompactScreen)
+                ? 'bg-cyan-500/30 text-cyan-100 border-2 border-cyan-300 shadow-[0_0_15px_rgba(0,240,255,0.6)]'
+                : 'text-cyan-400/80 hover:text-cyan-200 hover:bg-cyan-950/40'
             }`}
           >
-            <Box className="w-3 h-3 text-emerald-400" />
-            <span>AGENTS 3D</span>
+            <Box className="w-3.5 h-3.5 text-emerald-400" />
+            <span className="tracking-wider text-emerald-300">AGENTS 3D</span>
           </button>
+
           <button
-            onClick={() => setActiveMobileTab('voice')}
-            className={`flex items-center gap-1 px-2.5 py-1 rounded transition-colors ${
-              activeMobileTab === 'voice'
-                ? 'bg-cyan-500/30 text-cyan-200 border border-cyan-400 font-bold'
-                : 'text-cyan-500'
+            onClick={() => {
+              setMaximizedPanel('right');
+              setActiveMobileTab('voice');
+            }}
+            className={`flex items-center gap-1.5 px-3 py-1 rounded-md transition-all cursor-pointer font-bold ${
+              maximizedPanel === 'right' || (!maximizedPanel && activeMobileTab === 'voice' && isCompactScreen)
+                ? 'bg-cyan-500/30 text-cyan-100 border border-cyan-400 shadow-[0_0_12px_rgba(0,240,255,0.4)]'
+                : 'text-cyan-400/80 hover:text-cyan-200 hover:bg-cyan-950/40'
             }`}
           >
-            <MessageSquare className="w-3 h-3" />
-            <span>VOICE</span>
+            <MessageSquare className="w-3.5 h-3.5 text-cyan-400" />
+            <span className="tracking-wider">VOICE</span>
           </button>
         </div>
-      )}
+
+        {/* Right Toggle: Dashboard 3-Column Split Mode */}
+        <div className="flex items-center gap-2">
+          {!isCompactScreen && (
+            <button
+              onClick={() => setMaximizedPanel(maximizedPanel ? null : 'agents')}
+              className={`px-2.5 py-1 rounded text-[11px] font-bold border transition-all cursor-pointer ${
+                !maximizedPanel
+                  ? 'bg-cyan-500/20 text-cyan-200 border-cyan-400'
+                  : 'bg-[#04121d] text-cyan-400/70 border-cyan-500/30 hover:text-cyan-200'
+              }`}
+              title="Toggle between 3-Column Command Dashboard and Focused View"
+            >
+              {!maximizedPanel ? '3-COL SPLIT' : 'RESTORE DASHBOARD'}
+            </button>
+          )}
+        </div>
+      </div>
 
       {/* Maximized View */}
       {maximizedPanel ? (
-        <div className="h-full w-full relative min-h-0 overflow-hidden">
+        <div className="h-full w-full relative min-h-0 overflow-hidden flex-1">
           <button
             onClick={() => setMaximizedPanel(null)}
             className="absolute top-2.5 right-2.5 z-50 px-3 py-1 bg-cyan-950/90 border border-cyan-400 text-cyan-200 rounded text-xs font-mono-tech flex items-center gap-1 shadow-[0_0_15px_rgba(0,240,255,0.4)] hover:bg-cyan-900 cursor-pointer"
           >
             <Minimize2 className="w-3.5 h-3.5" />
-            <span>RESTORE VIEW</span>
+            <span>RESTORE DASHBOARD</span>
           </button>
 
           {maximizedPanel === 'left' && <SatLinkFeed isExpanded onToggleExpand={() => setMaximizedPanel(null)} />}
@@ -399,6 +440,7 @@ export default function App() {
               isExpanded
               onToggleExpand={() => setMaximizedPanel(null)}
               externalTaskTrigger={externalTaskTrigger}
+              onBackToDashboard={() => setMaximizedPanel(null)}
             />
           )}
           {maximizedPanel === 'right' && (

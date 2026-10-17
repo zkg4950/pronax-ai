@@ -146,6 +146,175 @@ app.post('/api/admin/agent-task', async (req, res) => {
   }
 });
 
+// Endpoint for realistic, human-like conversations between agents (Alice, Bob, Carol, Dave)
+app.post('/api/admin/inter-agent-dialogue', async (req, res) => {
+  try {
+    const { topic, language = 'saraiki_urdu' } = req.body;
+
+    if (ai) {
+      try {
+        const langInstruction =
+          language === 'saraiki_urdu'
+            ? `Language: Conversational Saraiki / Urdu (in Roman script with authentic warm words like Ada, Baji, Jani, Bhra, Te, Han, Ditta, Peyan, Bilkul theek, Chass karwa ditta). They speak with natural high-tech intelligence context in Saraiki / Urdu.`
+            : `Language: English (Professional, crisp corporate intelligence tech banter).`;
+
+        const prompt = `You are orchestrating a realistic workplace conversation in a high-tech corporate intelligence office between 4 elite professionals:
+1. Alice (Lead Intelligence Analyst): Tactical, analyzes satellite briefings. Respected as "Alice Baji".
+2. Bob (Senior Cyber Security Engineer): Guards network perimeter, drinks espresso, wears headset. Referred to as "Ada Bob".
+3. Carol (Data Pipeline Specialist): Manages streaming ETL queues, reminds team to drink water. Referred to as "Carol Behan".
+4. Dave (Cloud DevOps Architect): Cloud Kubernetes optimizer. Referred to as "Dave Bhai / Jani".
+
+${langInstruction}
+Context / Topic: "${topic || "Checking each other's tasks, satellite uplink, server load, and tea/coffee break"}"
+
+Generate a natural 4 to 6 turn conversation where they talk to each other like real human colleagues: asking for work updates, collaborating on tasks, and giving witty status confirmations.
+Output STRICT JSON array ONLY, where each item is:
+{
+  "speakerId": "alice" | "bob" | "carol" | "dave",
+  "speakerName": "Alice" | "Bob" | "Carol" | "Dave",
+  "targetId": "alice" | "bob" | "carol" | "dave" | "all",
+  "text": "short spoken sentence under 25 words in the requested language"
+}`;
+
+        const response = await ai.models.generateContent({
+          model: 'gemini-3.8-flash',
+          contents: [{ role: 'user', parts: [{ text: prompt }] }],
+          config: {
+            temperature: 0.8,
+            responseMimeType: 'application/json',
+          },
+        });
+
+        const raw = response.text || '[]';
+        const parsed = JSON.parse(raw);
+        if (Array.isArray(parsed) && parsed.length > 0) {
+          return res.json({ dialogue: parsed });
+        }
+      } catch (err) {
+        console.warn('Inter-agent dialogue Gemini call failed, using curated Saraiki/Urdu scenarios:', err);
+      }
+    }
+
+    // Curated Authentic Saraiki & Urdu Office Conversations
+    const saraikiUrduConversations = [
+      [
+        {
+          speakerId: 'alice',
+          speakerName: 'Alice',
+          targetId: 'bob',
+          text: 'Ada Bob, Sector-9 satellite da encrypted firewall link verify thia hey?',
+        },
+        {
+          speakerId: 'bob',
+          speakerName: 'Bob',
+          targetId: 'alice',
+          text: 'Haan Alice Baji! Port 8080 te mTLS bilkul tight la ditta hey, zero packet loss hey.',
+        },
+        {
+          speakerId: 'bob',
+          speakerName: 'Bob',
+          targetId: 'carol',
+          text: 'Carol behan, tuhada real-time Kafka streaming kiven chalda paya hey?',
+        },
+        {
+          speakerId: 'carol',
+          speakerName: 'Carol',
+          targetId: 'bob',
+          text: 'Ada Bob, pipeline 1.42 million events per second nal mast chaldi payi hey, latency sirf 8ms hey!',
+        },
+        {
+          speakerId: 'dave',
+          speakerName: 'Dave',
+          targetId: 'all',
+          text: 'Jani Kubernetes de saray 16 pods green han, CPU sirf 35% te hey. System full chass karwa reha hey!',
+        },
+        {
+          speakerId: 'alice',
+          speakerName: 'Alice',
+          targetId: 'all',
+          text: 'Zabardast team! Inventor Usman sahib wastey final briefing dossier save kardi payan.',
+        },
+      ],
+      [
+        {
+          speakerId: 'carol',
+          speakerName: 'Carol',
+          targetId: 'dave',
+          text: 'Dave bhai, ClickHouse node 02 te query surge aandi payi hey, do naway pods spin kar dyo?',
+        },
+        {
+          speakerId: 'dave',
+          speakerName: 'Dave',
+          targetId: 'carol',
+          text: 'Huney kar ditta Carol behan! Do worker pods auto-scale te active han, latency check karo.',
+        },
+        {
+          speakerId: 'carol',
+          speakerName: 'Carol',
+          targetId: 'dave',
+          text: 'Shukar hey, buffer utilization wapis 18% te aa gayi hey. Meharbani Dave bhai!',
+        },
+        {
+          speakerId: 'bob',
+          speakerName: 'Bob',
+          targetId: 'alice',
+          text: 'Alice baji, maen espresso bar tu garama garam chai/qahwa le aawan, tuhaday wastey ve le aawan?',
+        },
+        {
+          speakerId: 'alice',
+          speakerName: 'Alice',
+          targetId: 'bob',
+          text: 'Ada Bob tussi boht changay ho! Thori chini ghatt rakhna, maen satellite telemetry analyze kar rahi aan.',
+        },
+        {
+          speakerId: 'dave',
+          speakerName: 'Dave',
+          targetId: 'bob',
+          text: 'Ada Bob, meray wastey ve ik cup karak espresso le aana jani!',
+        },
+      ],
+      [
+        {
+          speakerId: 'bob',
+          speakerName: 'Bob',
+          targetId: 'all',
+          text: 'Saray bhra sun lo, subnet 192.168.1.0/24 te live intrusion scan shuru kar ditta hey.',
+        },
+        {
+          speakerId: 'alice',
+          speakerName: 'Alice',
+          targetId: 'bob',
+          text: 'Ada Bob, diplomatic hotline bridge te TLS 1.3 lock rakhna, Usman sahib di call aani hey.',
+        },
+        {
+          speakerId: 'bob',
+          speakerName: 'Bob',
+          targetId: 'alice',
+          text: 'Fikar na karo Baji! ED25519 public keys lagiyan hoyian han, koi hacker andar nahi aa sakda.',
+        },
+        {
+          speakerId: 'carol',
+          speakerName: 'Carol',
+          targetId: 'all',
+          text: 'Te paani peena na bhulna saaray, hydration boht zaroori hey continuous coding wastey!',
+        },
+        {
+          speakerId: 'dave',
+          speakerName: 'Dave',
+          targetId: 'all',
+          text: 'Haha bilkul saheeh Carol behan! Sara cluster mast te secure chalda paya hey.',
+        },
+      ],
+    ];
+
+    const randomIndex = Math.floor(Math.random() * saraikiUrduConversations.length);
+    return res.json({ dialogue: saraikiUrduConversations[randomIndex] });
+  } catch (error) {
+    console.error('Inter-agent dialogue error:', error);
+    return res.status(500).json({ error: 'Failed to generate dialogue.' });
+  }
+});
+
 app.post('/api/admin/chat', async (req, res) => {
   try {
     const { message, conversationHistory } = req.body;
@@ -300,8 +469,8 @@ async function startServer() {
     app.use(vite.middlewares);
   }
 
-  app.listen(port, () => {
-    console.log(`Stonic AI Server running on port ${port}`);
+  app.listen(Number(port), '0.0.0.0', () => {
+    console.log(`Stonic AI Server running on http://0.0.0.0:${port}`);
   });
 }
 

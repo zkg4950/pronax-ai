@@ -46,3 +46,13 @@ export interface AgentInfo {
   y?: number;
   currentLocation?: string;
 }
+
+export interface InterAgentMessage {
+  id: string;
+  speakerId: 'alice' | 'bob' | 'carol' | 'dave';
+  speakerName: string;
+  targetId?: 'alice' | 'bob' | 'carol' | 'dave' | 'all';
+  text: string;
+  timestamp: string;
+}
+
