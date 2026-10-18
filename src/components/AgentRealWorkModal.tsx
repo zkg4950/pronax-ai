@@ -101,8 +101,8 @@ export const AgentRealWorkModal: React.FC<AgentRealWorkModalProps> = ({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-3 bg-black/80 backdrop-blur-md font-mono-tech select-none animate-in fade-in duration-200">
-      <div className="relative w-full max-w-3xl max-h-[88vh] bg-[#031320] border-2 border-cyan-400 rounded-2xl flex flex-col overflow-hidden shadow-[0_0_50px_rgba(0,240,255,0.3)]">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-3 bg-black/80 backdrop-blur-md font-mono-tech animate-in fade-in duration-200">
+      <div className="relative w-full max-w-3xl max-h-[88vh] bg-[#031320] border-2 border-cyan-400 rounded-2xl flex flex-col overflow-hidden shadow-[0_0_50px_rgba(0,240,255,0.3)] select-text">
         {/* Modal Top Header */}
         <div className="flex items-center justify-between px-4 py-2.5 bg-[#02182b] border-b border-cyan-500/40 shrink-0">
           <div className="flex items-center gap-3">
@@ -253,8 +253,21 @@ export const AgentRealWorkModal: React.FC<AgentRealWorkModalProps> = ({
 
               {/* Executed Iptables Rule Generator */}
               <div className="p-3 rounded-xl bg-[#020b12] border border-cyan-500/30 space-y-1.5">
-                <span className="text-sky-300 font-bold text-xs">ACTIVE IPTABLES DEFENSE SCRIPT:</span>
-                <pre className="text-[11px] text-cyan-200 bg-[#01070e] p-2 rounded border border-cyan-500/20 overflow-x-auto">
+                <div className="flex items-center justify-between pb-1">
+                  <span className="text-sky-300 font-bold text-xs">ACTIVE IPTABLES DEFENSE SCRIPT:</span>
+                  <button
+                    onClick={() =>
+                      copyText(
+                        `$ iptables -A INPUT -p tcp --dport 22 -m state --state NEW -m recent --set\n$ iptables -A INPUT -p tcp --dport 22 -m state --state NEW -m recent --update --seconds 60 --hitcount 4 -j DROP\n$ iptables -A INPUT -p tcp --dport 8080 -m state --state ESTABLISHED,RELATED -j ACCEPT`
+                      )
+                    }
+                    className="flex items-center gap-1 px-2 py-0.5 rounded bg-cyan-950 border border-cyan-500/40 text-[10px] text-cyan-300 hover:text-white cursor-pointer"
+                  >
+                    {copied ? <Check className="w-3 h-3 text-emerald-400" /> : <Copy className="w-3 h-3" />}
+                    <span>{copied ? 'COPIED!' : 'COPY IPTABLES'}</span>
+                  </button>
+                </div>
+                <pre className="text-[11px] text-cyan-200 bg-[#01070e] p-2.5 rounded border border-cyan-500/20 overflow-x-auto select-text cursor-text leading-relaxed">
 {`$ iptables -A INPUT -p tcp --dport 22 -m state --state NEW -m recent --set
 $ iptables -A INPUT -p tcp --dport 22 -m state --state NEW -m recent --update --seconds 60 --hitcount 4 -j DROP
 $ iptables -A INPUT -p tcp --dport 8080 -m state --state ESTABLISHED,RELATED -j ACCEPT`}
@@ -289,14 +302,23 @@ $ iptables -A INPUT -p tcp --dport 8080 -m state --state ESTABLISHED,RELATED -j 
               <div className="p-3 rounded-xl bg-[#020e18] border border-emerald-500/30 space-y-2">
                 <div className="flex items-center justify-between">
                   <span className="text-emerald-300 font-bold">CLICKHOUSE REAL-TIME SQL QUERY</span>
-                  <button
-                    onClick={handleRunQuery}
-                    disabled={isExecutingQuery}
-                    className="flex items-center gap-1 px-3 py-1 rounded bg-emerald-500/30 border border-emerald-400 text-emerald-100 font-bold hover:bg-emerald-500/50 cursor-pointer disabled:opacity-40"
-                  >
-                    <Play className="w-3.5 h-3.5 fill-current" />
-                    <span>{isExecutingQuery ? 'EXECUTING...' : 'RUN QUERY'}</span>
-                  </button>
+                  <div className="flex items-center gap-2">
+                    <button
+                      onClick={() => copyText(queryInput)}
+                      className="flex items-center gap-1 px-2.5 py-1 rounded bg-emerald-950/80 border border-emerald-500/40 text-emerald-300 text-xs hover:text-white cursor-pointer"
+                    >
+                      {copied ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5" />}
+                      <span>{copied ? 'COPIED!' : 'COPY SQL'}</span>
+                    </button>
+                    <button
+                      onClick={handleRunQuery}
+                      disabled={isExecutingQuery}
+                      className="flex items-center gap-1 px-3 py-1 rounded bg-emerald-500/30 border border-emerald-400 text-emerald-100 font-bold hover:bg-emerald-500/50 cursor-pointer disabled:opacity-40"
+                    >
+                      <Play className="w-3.5 h-3.5 fill-current" />
+                      <span>{isExecutingQuery ? 'EXECUTING...' : 'RUN QUERY'}</span>
+                    </button>
+                  </div>
                 </div>
                 <textarea
                   value={queryInput}
@@ -341,6 +363,19 @@ $ iptables -A INPUT -p tcp --dport 8080 -m state --state ESTABLISHED,RELATED -j 
                   <span className="text-cyan-300/80 text-[11px]">Cilium eBPF Service Mesh Active | Envoy Proxies: 16</span>
                 </div>
                 <div className="flex items-center gap-2">
+                  <button
+                    onClick={() =>
+                      copyText(
+                        `$ kubectl get pods -n stonic-ai -o wide\n${pods
+                          .map((p) => `${p.name}\t${p.status}\t${p.restarts}\t${p.cpu}\t${p.memory}`)
+                          .join('\n')}`
+                      )
+                    }
+                    className="flex items-center gap-1 px-2.5 py-1 rounded bg-amber-950/80 border border-amber-500/40 text-amber-200 text-xs hover:text-white cursor-pointer"
+                  >
+                    {copied ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5" />}
+                    <span>{copied ? 'COPIED!' : 'COPY KUBECTL'}</span>
+                  </button>
                   <span className="text-amber-300 text-xs">Replicas: {replicaCount}</span>
                   <button
                     onClick={() => setReplicaCount((r) => Math.min(8, r + 1))}

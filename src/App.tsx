@@ -6,7 +6,11 @@ import { VoiceConsole } from './components/VoiceConsole';
 import { Modals } from './components/Modals';
 import { BrainConfigModal, DEFAULT_BRAIN_CONFIG } from './components/BrainConfigModal';
 import { ScreenMonitorDeck } from './components/ScreenMonitorDeck';
-import { ChatMessage, AgentInfo, BrainConfig } from './types';
+import {
+  VoiceBiometricSecurity,
+  DEFAULT_SECURITY_PROFILE,
+} from './components/VoiceBiometricSecurity';
+import { ChatMessage, AgentInfo, BrainConfig, OwnerSecurityProfile } from './types';
 import {
   Maximize2,
   Minimize2,
@@ -16,6 +20,10 @@ import {
   MessageSquare,
   Cpu,
   Monitor,
+  ShieldCheck,
+  ShieldAlert,
+  UserCheck,
+  Lock,
 } from 'lucide-react';
 
 const INITIAL_MESSAGES: ChatMessage[] = [
@@ -77,6 +85,26 @@ export default function App() {
       console.warn('Could not read saved brain config:', e);
     }
     return DEFAULT_BRAIN_CONFIG;
+  });
+
+  // Voice Biometric Security & Sentry Guard
+  const [securityProfile, setSecurityProfile] = useState<OwnerSecurityProfile>(() => {
+    try {
+      const saved = localStorage.getItem('stonic_owner_voice_profile');
+      if (saved) return JSON.parse(saved);
+    } catch (e) {
+      console.warn('Could not read saved security profile:', e);
+    }
+    return DEFAULT_SECURITY_PROFILE;
+  });
+  const [isLockdownActive, setIsLockdownActive] = useState<boolean>(false);
+  const [isSecurityModalOpen, setIsSecurityModalOpen] = useState<boolean>(false);
+  const [lastOwnerVerification, setLastOwnerVerification] = useState<{
+    time: string;
+    confidence: number;
+  }>({
+    time: '04:12 AM',
+    confidence: 99.2,
   });
 
   // Dynamic 3D Human Task Trigger (When user speaks or commands, 3D agent responds physically)
@@ -426,10 +454,20 @@ export default function App() {
   return (
     <div
       ref={containerRef}
-      className="fixed inset-0 w-screen h-screen max-w-screen max-h-screen overflow-hidden box-border p-1 bg-[#02070e] text-[#dcf4fb] flex flex-col font-sans select-none"
+      onClickCapture={(e) => {
+        // If Sentry Guard is armed and not in lockdown:
+        // Any click outside the security unlock triggers immediate Lockdown!
+        if (securityProfile.sentryArmed && !isLockdownActive && !isSecurityModalOpen) {
+          const target = e.target as HTMLElement;
+          if (target && !target.closest('#security-sentry-btn')) {
+            setIsLockdownActive(true);
+          }
+        }
+      }}
+      className="fixed inset-0 w-screen h-screen max-w-screen max-h-screen overflow-hidden box-border p-1 bg-[#02070e] text-[#dcf4fb] flex flex-col font-sans"
     >
       {/* Top Header Navigation Tabs Matching Reference Image */}
-      <div className="flex items-center justify-between px-3 py-1.5 border-b border-cyan-500/30 bg-[#030d17]/95 shrink-0 mb-1 rounded-lg text-xs font-mono-tech shadow-[0_0_20px_rgba(0,240,255,0.06)] z-40">
+      <div className="flex items-center justify-between px-3 py-1.5 border-b border-cyan-500/30 bg-[#030d17]/95 shrink-0 mb-1 rounded-lg text-xs font-mono-tech shadow-[0_0_20px_rgba(0,240,255,0.06)] z-40 select-none">
         <div className="flex items-center gap-2">
           <span className="w-2 h-2 rounded-full bg-cyan-400 shadow-[0_0_10px_#00f0ff] animate-pulse" />
           <span className="font-bold tracking-widest text-cyan-200 hidden sm:inline">STONIC AI</span>
@@ -501,8 +539,34 @@ export default function App() {
           </button>
         </div>
 
-        {/* Right Toggle: Dashboard 3-Column Split Mode */}
+        {/* Right Toggle: Sentry Security & Dashboard 3-Column Split Mode */}
         <div className="flex items-center gap-2">
+          {/* Owner Voice Biometric Guard & Sentry Switch */}
+          <button
+            id="security-sentry-btn"
+            onClick={() => setIsSecurityModalOpen(true)}
+            className={`flex items-center gap-1.5 px-2.5 py-1 rounded text-[11px] font-bold border transition-all cursor-pointer shadow-sm ${
+              securityProfile.sentryArmed
+                ? 'bg-red-500/25 text-red-200 border-red-400 shadow-[0_0_12px_rgba(239,68,68,0.5)] animate-pulse'
+                : 'bg-emerald-950/70 text-emerald-300 border-emerald-500/50 hover:bg-emerald-900/60 shadow-[0_0_10px_rgba(16,185,129,0.25)]'
+            }`}
+            title="Owner Voice Biometric Protection & Sentry Mode"
+          >
+            {securityProfile.sentryArmed ? (
+              <ShieldAlert className="w-3.5 h-3.5 text-red-400" />
+            ) : (
+              <ShieldCheck className="w-3.5 h-3.5 text-emerald-400" />
+            )}
+            <span className="hidden sm:inline">
+              {securityProfile.sentryArmed
+                ? 'SENTRY ARMED'
+                : `MALIK: ${securityProfile.ownerName.toUpperCase()}`}
+            </span>
+            <span className="text-[9px] px-1 py-0.2 rounded bg-black/40 border border-current text-white hidden md:inline">
+              {lastOwnerVerification ? `${lastOwnerVerification.confidence.toFixed(0)}% MATCH` : 'VERIFIED'}
+            </span>
+          </button>
+
           {!isCompactScreen && (
             <button
               onClick={() => setMaximizedPanel(maximizedPanel ? null : 'agents')}
@@ -732,6 +796,29 @@ export default function App() {
         externalVoiceCommand={
           messages[messages.length - 1]?.role === 'user' ? messages[messages.length - 1]?.content : null
         }
+      />
+
+      {/* Voice Biometric Owner Security & Laptop Sentry Guard */}
+      <VoiceBiometricSecurity
+        securityProfile={securityProfile}
+        onUpdateSecurityProfile={(newProfile) => {
+          setSecurityProfile(newProfile);
+          try {
+            localStorage.setItem('stonic_owner_voice_profile', JSON.stringify(newProfile));
+          } catch (e) {
+            console.warn('Failed to save security profile:', e);
+          }
+        }}
+        isLockdownActive={isLockdownActive}
+        onSetLockdownActive={setIsLockdownActive}
+        isOpenSettings={isSecurityModalOpen}
+        onCloseSettings={() => setIsSecurityModalOpen(false)}
+        onOwnerVerified={(conf) => {
+          setLastOwnerVerification({
+            time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+            confidence: conf,
+          });
+        }}
       />
     </div>
   );

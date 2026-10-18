@@ -96,6 +96,9 @@ export function playConfirmChime() {
   }
 }
 
+// Export alias for backward compatibility
+export const playAccessGrantedSound = playBiometricGrantedChime;
+
 // High clarity speech synthesizer that uses appropriate native voices and drives real lip-sync
 export function speakAgentDialogue(
   spokenText: string,
@@ -233,3 +236,94 @@ export function speakAgentDialogue(
     // Keep fallback timer
   }
 }
+
+// Security Sentry: High-Alert Red Intruder Siren Sound
+let sirenInterval: any = null;
+
+export function playIntruderAlarmSound() {
+  try {
+    const ctx = getAudioContext();
+    if (!ctx) return;
+
+    // Play an immediate alternating two-tone alarm siren
+    const playTone = (freq1: number, freq2: number, dur: number) => {
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      const now = ctx.currentTime;
+      osc.type = 'sawtooth';
+      osc.frequency.setValueAtTime(freq1, now);
+      osc.frequency.exponentialRampToValueAtTime(freq2, now + dur);
+
+      gain.gain.setValueAtTime(0.18, now);
+      gain.gain.exponentialRampToValueAtTime(0.01, now + dur);
+
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+
+      osc.start(now);
+      osc.stop(now + dur);
+    };
+
+    playTone(850, 420, 0.28);
+    setTimeout(() => {
+      playTone(950, 450, 0.32);
+    }, 280);
+  } catch (e) {
+    // Suppress audio policy issues
+  }
+}
+
+// Biometric Access Granted Chime (Futuristic crystal clear unlock tone)
+export function playBiometricGrantedChime() {
+  try {
+    const ctx = getAudioContext();
+    if (!ctx) return;
+
+    const now = ctx.currentTime;
+    [523.25, 659.25, 783.99, 1046.5].forEach((freq, idx) => {
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(freq, now + idx * 0.07);
+
+      gain.gain.setValueAtTime(0.12, now + idx * 0.07);
+      gain.gain.exponentialRampToValueAtTime(0.001, now + idx * 0.07 + 0.35);
+
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+
+      osc.start(now + idx * 0.07);
+      osc.stop(now + idx * 0.07 + 0.35);
+    });
+  } catch (e) {
+    // Suppress
+  }
+}
+
+// Biometric Access Denied Sound (Harsh error buzz)
+export function playBiometricDeniedSound() {
+  try {
+    const ctx = getAudioContext();
+    if (!ctx) return;
+
+    const now = ctx.currentTime;
+    [180, 160].forEach((freq, idx) => {
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.type = 'square';
+      osc.frequency.setValueAtTime(freq, now + idx * 0.14);
+
+      gain.gain.setValueAtTime(0.14, now + idx * 0.14);
+      gain.gain.exponentialRampToValueAtTime(0.001, now + idx * 0.14 + 0.12);
+
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+
+      osc.start(now + idx * 0.14);
+      osc.stop(now + idx * 0.14 + 0.12);
+    });
+  } catch (e) {
+    // Suppress
+  }
+}
+

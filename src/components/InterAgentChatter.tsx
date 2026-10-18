@@ -13,6 +13,8 @@ import {
   Cpu,
   Loader2,
   Send,
+  Copy,
+  Check,
 } from 'lucide-react';
 import { InterAgentMessage } from '../types';
 
@@ -50,6 +52,7 @@ export const InterAgentChatter: React.FC<InterAgentChatterProps> = ({
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [radioAudioEnabled, setRadioAudioEnabled] = useState<boolean>(false);
   const [customTopic, setCustomTopic] = useState<string>('');
+  const [copiedId, setCopiedId] = useState<string | null>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   // Fetch chatter stream
@@ -174,12 +177,14 @@ export const InterAgentChatter: React.FC<InterAgentChatterProps> = ({
           return (
             <div
               key={msg.id}
-              onClick={() => onAgentFocus && onAgentFocus(msg.senderId)}
-              className="p-2.5 rounded-lg bg-[#031322]/90 border border-cyan-500/20 hover:border-cyan-400/50 transition-all cursor-pointer group shadow-sm"
+              className="p-2.5 rounded-lg bg-[#031322]/90 border border-cyan-500/20 hover:border-cyan-400/50 transition-all group shadow-sm relative"
             >
               {/* Message Header: Sender -> Recipient */}
-              <div className="flex items-center justify-between text-[11px] mb-1.5 pb-1 border-b border-cyan-500/15">
-                <div className="flex items-center gap-1.5">
+              <div className="flex items-center justify-between text-[11px] mb-1.5 pb-1 border-b border-cyan-500/15 select-none">
+                <div
+                  onClick={() => onAgentFocus && onAgentFocus(msg.senderId)}
+                  className="flex items-center gap-1.5 cursor-pointer hover:opacity-90"
+                >
                   <img
                     src={senderAvatar}
                     alt={msg.senderName}
@@ -199,11 +204,28 @@ export const InterAgentChatter: React.FC<InterAgentChatterProps> = ({
                     {msg.category}
                   </span>
                   <span>{msg.timestamp}</span>
+                  <button
+                    type="button"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      navigator.clipboard.writeText(`${msg.senderName} -> ${msg.recipientName}: ${msg.content}`);
+                      setCopiedId(msg.id);
+                      setTimeout(() => setCopiedId(null), 2000);
+                    }}
+                    className="opacity-0 group-hover:opacity-100 p-0.5 rounded text-cyan-400 hover:text-white transition-opacity cursor-pointer"
+                    title="Copy message"
+                  >
+                    {copiedId === msg.id ? (
+                      <Check className="w-3 h-3 text-emerald-400" />
+                    ) : (
+                      <Copy className="w-3 h-3" />
+                    )}
+                  </button>
                 </div>
               </div>
 
               {/* Message Content */}
-              <p className="text-xs text-cyan-100/90 leading-relaxed pl-1 font-sans">
+              <p className="text-xs text-cyan-100/90 leading-relaxed pl-1 font-sans select-text cursor-text">
                 {msg.content}
               </p>
             </div>

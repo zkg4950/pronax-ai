@@ -734,6 +734,16 @@ Return ONLY a valid JSON object matching this schema:
       "explanation": "brief explanation in Roman Urdu"
     }
   ],
+  "controlElements": [
+    {
+      "id": "ctl-1",
+      "type": "button|input|tab|error_box|terminal_prompt|workflow",
+      "label": "Name of visible UI element, button, input field, or menu detected",
+      "actionRequired": "Action to control this element in Roman Urdu",
+      "recommendedCommand": "Command or script to execute",
+      "confidence": 98
+    }
+  ],
   "speechResponse": "MANDATORY: 1-2 sentence spoken summary in pure Roman Urdu / Saraiki (e.g. 'Jani tuhan-di screen live check kar liti hai, code te browser theek chal ray ne aur koi error nai aya.')"
 }`;
 
@@ -785,7 +795,7 @@ Return ONLY a valid JSON object matching this schema:
     if (!visionResult) {
       visionResult = {
         summary: 'Jani desktop workspace frame capture kar k Stonic AI neural buffer vich index kar litta hai.',
-        appName: 'Desktop Environment / Workstation',
+        appName: 'Desktop Environment / Workstation & Active App',
         detectedIssues: ['Active application workspace scan ho gaya hai. Koi critical error ya masla nai aya.'],
         suggestedActions: [
           'Code verification aur automated lint test run karo',
@@ -798,6 +808,32 @@ Return ONLY a valid JSON object matching this schema:
             filename: 'terminal-command.sh',
             code: '# Stonic AI Desktop Command\nnpm run build && echo "Build Verification Succeeded, Jani."',
             explanation: 'Rapid compilation verification check execute karesaan.',
+          },
+        ],
+        controlElements: [
+          {
+            id: 'ctl-1',
+            type: 'terminal_prompt',
+            label: 'Interactive Terminal Shell ($)',
+            actionRequired: 'Automated test suite aur compile check execute karo',
+            recommendedCommand: 'npm run lint && npm run build',
+            confidence: 99,
+          },
+          {
+            id: 'ctl-2',
+            type: 'workflow',
+            label: 'Active Workspace & Editor Controls',
+            actionRequired: 'Live code monitor te syntax validator active hai',
+            recommendedCommand: 'git status',
+            confidence: 96,
+          },
+          {
+            id: 'ctl-3',
+            type: 'button',
+            label: 'Deploy / Sync Service Mesh',
+            actionRequired: 'Cluster synchronizing state verify karo',
+            recommendedCommand: 'kubectl get pods -A',
+            confidence: 94,
           },
         ],
         speechResponse: 'Jani tuhan-di screen live monitor ho gayi hai! Workspace check kar lita hai te sab subroutines hukum wastey tayar khary hin.',

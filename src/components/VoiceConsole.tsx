@@ -13,6 +13,10 @@ import {
   Radio,
   Sparkles,
   Bot,
+  Copy,
+  Check,
+  Monitor,
+  Eye,
 } from 'lucide-react';
 import { ChatMessage } from '../types';
 import { InterAgentChatter } from './InterAgentChatter';
@@ -29,6 +33,7 @@ interface VoiceConsoleProps {
   soundEnabled: boolean;
   setSoundEnabled: (val: boolean) => void;
   onOpenInfoPanel: () => void;
+  onOpenScreenMonitor?: () => void;
   isExpanded?: boolean;
   onToggleExpand?: () => void;
   onSelectAgent?: (agentId: string) => void;
@@ -61,6 +66,7 @@ export const VoiceConsole: React.FC<VoiceConsoleProps> = ({
 }) => {
   const [activeTab, setActiveTab] = useState<'voice' | 'inter-agent' | 'notes'>('voice');
   const [inputText, setInputText] = useState('');
+  const [copiedMsgId, setCopiedMsgId] = useState<string | null>(null);
   const [notes, setNotes] = useState<string>(
     `# STONIC AI MISSION DIRECTIVES\n- Creator: Stonic AI Team\n- Owner: Inventor Usman (https://stonicai.com/)\n- Status: Desktop AI Active\n- Sub-agents: Alice, Bob, Carol, Dave\n- Sector: 9 / Uplink 99.2%`
   );
@@ -211,25 +217,62 @@ export const VoiceConsole: React.FC<VoiceConsoleProps> = ({
                       </div>
                     )}
 
-                    <div
-                      className="p-3.5 rounded-lg border text-cyan-50 text-[12.5px] leading-relaxed shadow-[0_0_15px_rgba(0,240,255,0.04)] font-sans whitespace-pre-line"
-                      style={{
-                        backgroundColor: msg.agentId ? 'rgba(3, 20, 32, 0.85)' : '#061e29/70',
-                        borderColor: msg.agentId ? `${agentColor}50` : 'rgba(6, 182, 212, 0.25)',
-                      }}
-                    >
-                      {msg.content}
+                    <div className="relative group">
+                      <div
+                        className="p-3.5 rounded-lg border text-cyan-50 text-[12.5px] leading-relaxed shadow-[0_0_15px_rgba(0,240,255,0.04)] font-sans whitespace-pre-line select-text cursor-text"
+                        style={{
+                          backgroundColor: msg.agentId ? 'rgba(3, 20, 32, 0.85)' : 'rgba(6, 30, 41, 0.7)',
+                          borderColor: msg.agentId ? `${agentColor}50` : 'rgba(6, 182, 212, 0.25)',
+                        }}
+                      >
+                        {msg.content}
+                      </div>
+
+                      <button
+                        type="button"
+                        onClick={() => {
+                          navigator.clipboard.writeText(msg.content);
+                          setCopiedMsgId(msg.id);
+                          setTimeout(() => setCopiedMsgId(null), 2000);
+                        }}
+                        className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 p-1.5 rounded bg-[#010912]/80 border border-cyan-500/40 text-cyan-300 hover:text-white transition-opacity select-none cursor-pointer shadow-sm"
+                        title="Copy message"
+                      >
+                        {copiedMsgId === msg.id ? (
+                          <Check className="w-3 h-3 text-emerald-400" />
+                        ) : (
+                          <Copy className="w-3 h-3" />
+                        )}
+                      </button>
                     </div>
                   </div>
                 ) : (
                   /* User Message */
                   <div className="flex flex-col items-end space-y-1 pt-1">
-                    <div className="flex items-center gap-1.5 text-cyan-400/80 font-mono-tech text-[9.5px] font-bold tracking-widest">
+                    <div className="flex items-center gap-1.5 text-cyan-400/80 font-mono-tech text-[9.5px] font-bold tracking-widest select-none">
                       <span>YOU</span>
                       <span className="w-1.5 h-1.5 rounded-full bg-cyan-400" />
                     </div>
-                    <div className="p-3 rounded-lg bg-[#041924]/90 border border-cyan-500/20 text-cyan-100 text-[12.5px] leading-relaxed max-w-[88%] text-left font-sans">
-                      {msg.content}
+                    <div className="relative group max-w-[88%]">
+                      <div className="p-3 rounded-lg bg-[#041924]/90 border border-cyan-500/20 text-cyan-100 text-[12.5px] leading-relaxed text-left font-sans select-text cursor-text">
+                        {msg.content}
+                      </div>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          navigator.clipboard.writeText(msg.content);
+                          setCopiedMsgId(msg.id);
+                          setTimeout(() => setCopiedMsgId(null), 2000);
+                        }}
+                        className="absolute top-2 left-2 opacity-0 group-hover:opacity-100 p-1 rounded bg-[#010912]/80 border border-cyan-500/40 text-cyan-300 hover:text-white transition-opacity select-none cursor-pointer"
+                        title="Copy"
+                      >
+                        {copiedMsgId === msg.id ? (
+                          <Check className="w-2.5 h-2.5 text-emerald-400" />
+                        ) : (
+                          <Copy className="w-2.5 h-2.5" />
+                        )}
+                      </button>
                     </div>
                   </div>
                 )}

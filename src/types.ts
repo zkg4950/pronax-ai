@@ -11,6 +11,8 @@ export interface ChatMessage {
   timestamp: Date;
   actions?: ActionBadge[];
   isTyping?: boolean;
+  agentId?: string;
+  agentName?: string;
 }
 
 export interface TacticalHotspot {
@@ -49,10 +51,109 @@ export interface AgentInfo {
 
 export interface InterAgentMessage {
   id: string;
-  speakerId: 'alice' | 'bob' | 'carol' | 'dave';
-  speakerName: string;
-  targetId?: 'alice' | 'bob' | 'carol' | 'dave' | 'all';
-  text: string;
+  senderId: string;
+  recipientId: string;
+  senderName: string;
+  recipientName: string;
+  content: string;
+  category?: string;
   timestamp: string;
+
+  // Inter-agent dialogue compatibility
+  speakerId?: string;
+  speakerName?: string;
+  targetId?: string;
+  text?: string;
+}
+
+export type AIProvider =
+  | 'stonic_gemini'
+  | 'custom_gemini'
+  | 'openai'
+  | 'deepseek'
+  | 'anthropic'
+  | 'local_ollama'
+  | 'custom_endpoint';
+
+export interface BrainConfig {
+  provider: AIProvider;
+  apiKey: string;
+  model: string;
+  baseUrl: string;
+  autoSpeak: boolean;
+  voiceSpeed: number;
+  voicePitch: number;
+  voiceLanguage: string;
+  screenMonitorInterval: number;
+  temperature: number;
+}
+
+export interface ScreenCodeSnippet {
+  language: string;
+  filename?: string;
+  code: string;
+  explanation?: string;
+}
+
+export interface ScreenAnalysisResult {
+  summary: string;
+  appName?: string;
+  detectedIssues: string[];
+  suggestedActions: string[];
+  codeSnippets: ScreenCodeSnippet[];
+  speechResponse?: string;
+  timestamp?: string;
+  controlElements?: AppControlElement[];
+}
+
+export interface AppControlElement {
+  id: string;
+  type: 'button' | 'input' | 'tab' | 'error_box' | 'terminal_prompt' | 'workflow';
+  label: string;
+  actionRequired?: string;
+  recommendedCommand?: string;
+  confidence: number;
+}
+
+export interface LifetimeMissionState {
+  missionGoal: string;
+  isActive: boolean;
+  startTime: string;
+  scansPerformed: number;
+  actionsAutoExecuted: number;
+  lastAppDetected: string;
+  supervisedWindow: string;
+}
+
+export interface OwnerVoiceProfile {
+  ownerName: string;
+  voiceSignature: string;
+  enrolledAt: string;
+  passphrase: string;
+  dominantFrequencyHz: number;
+  tolerance: number;
+  guardArmed: boolean;
+}
+
+export interface SecurityBreachEvent {
+  id: string;
+  timestamp: string;
+  type: 'UNAUTHORIZED_TOUCH' | 'VOICE_MISMATCH' | 'PORT_INTRUSION';
+  detail: string;
+  preventedAction: string;
+}
+
+
+export interface OwnerSecurityProfile {
+  ownerName: string;
+  isEnrolled: boolean;
+  enrolledDate?: string;
+  baseFrequencyHz: number;
+  varianceThreshold: number;
+  voicePassphrase: string;
+  securityPin: string;
+  sentryArmed: boolean;
+  sensitivity: 'low' | 'medium' | 'high';
+  customVoiceWarning: string;
 }
 
