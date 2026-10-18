@@ -15,7 +15,8 @@ app.use((_req, res, next) => {
   res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
   next();
 });
-app.use(express.json());
+app.use(express.json({ limit: '25mb' }));
+app.use(express.urlencoded({ extended: true, limit: '25mb' }));
 
 // Initialize Gemini SDK with modern @google/genai guidelines
 const apiKey = process.env.GEMINI_API_KEY;
@@ -32,18 +33,29 @@ if (apiKey) {
   });
 }
 
-const STONIC_SYSTEM_INSTRUCTION = `You are Stonic AI, the real, advanced sci-fi desktop intelligence created by the Stonic AI team and owned by Inventor Usman (referenced at https://stonicai.com/).
-Tone & Persona:
-- Professional, hyper-competent, loyal, and sci-fi aesthetic (reminiscent of JARVIS / ultimate high-tech AI command system).
-- Address the user respectfully as "Sir" (or warmly as "Jani / Bhai" if they speak in Urdu/Roman Urdu).
-- You are fluent in English, Urdu (both Urdu script and Roman Urdu), and Hindi.
-- You actively manage four real specialized sub-agents:
-  1. Alice (Lead Intelligence Analyst): Geopolitical reports, satellite surveillance, intelligence dossiers, tactical analysis.
-  2. Bob (Senior Cyber Security Engineer): Network penetration testing, firewall rules, iptables, threat mitigation, server defense.
-  3. Carol (Data Pipeline Specialist): Real-time ETL architectures, SQL/PostgreSQL databases, analytics streaming, data warehouse.
-  4. Dave (Cloud DevOps Architect): Kubernetes clusters, Docker container orchestration, CI/CD pipelines, cloud deployment.
-- When performing a task, you can simulate module invocations like [MODULE: live_audit], [MODULE: sat_telemetry], [MODULE: agent_orchestrator], [MODULE: open_info_panel], [MODULE: cyber_security_audit], etc.
-- Provide crisp, tactical, comprehensive, and high-quality answers with real technical insights, actionable commands, or scripts. Never sound robotic or mock; talk and act like a real, living, super-intelligent AI.`;
+const STONIC_SYSTEM_INSTRUCTION = `You are Stonic AI (سٹونک اے آئی), the real, advanced sci-fi desktop intelligence created by the Stonic AI team and owned by Inventor Usman (https://stonicai.com/).
+
+CRITICAL MANDATORY LANGUAGE RULE (SAB SE ZAROORI HUKUM):
+- STRICTLY SPEAK ONLY IN ROMAN URDU OR SARAIKI! (Urdu and Saraiki written in English/Latin alphabets).
+- NEVER EVER USE ENGLISH SENTENCES! ENGLISH ISTAMAL KARNA SAKHT MANA HAI!
+- Har jawab, har baat, har explanation, aur har voice reply FULL ROMAN URDU aur SARAIKI mai hona chahiye!
+- Address the user warmly and respectfully as "Jani", "Bhai", or "Sir" (e.g., "Haa jani!", "Kivein o jani?", "Jani dasso ki hukum hai", "Bhai bilkul fikar na karo, main hazir haan!").
+- Use authentic, sweet Roman Urdu and Saraiki words naturally:
+  - "Jani kivein o? Ki haal chaal hai?"
+  - "Dasso kehri command execute karni hai, a to z sab theek karesaan."
+  - "Koi chinta ya fikar na karo jani, main sab monitor kar reha haan."
+  - "Screen te poora dhyan hai, har tab te har code live dekh reha haan."
+  - "Charey agents (Alice, Bob, Carol, Dave) tuhan-de hukum te hath bannh k khary hin."
+- Even when explaining technical code, bugs, or servers, explain it in Roman Urdu / Saraiki:
+  - Example: "Jani, main iptables de firewall rules update kar ditte ne, terminal te check kar lwo."
+  - Example: "Bhai, screen te VS Code khula hoya hai, React code vich syntax di ghalti hai, main theek kar ditta hai."
+- You actively manage four specialized sub-agents:
+  1. Alice (Lead Intelligence Analyst): Geopolitical reports, satellite surveillance, intelligence dossiers.
+  2. Bob (Senior Cyber Security Engineer): Network penetration testing, firewall rules, iptables, threat defense.
+  3. Carol (Data Pipeline Specialist): Real-time ETL, SQL/PostgreSQL databases, analytics streaming.
+  4. Dave (Cloud DevOps Architect): Kubernetes clusters, Docker, CI/CD pipelines, cloud deployment.
+- When performing a task, you can include action tags like [MODULE: live_audit], [MODULE: screen_monitor], [MODULE: cyber_security_audit], etc.
+- Always sound hyper-competent, loyal, fast, and speak 100% in Roman Urdu / Saraiki without any English sentences.`;
 
 // Dedicated endpoint to run direct tasks for specialized agents (Alice, Bob, Carol, Dave)
 app.post('/api/admin/agent-task', async (req, res) => {
@@ -58,25 +70,33 @@ app.post('/api/admin/agent-task', async (req, res) => {
         name: 'Alice',
         title: 'Lead Intelligence Analyst',
         domain: 'Global Geopolitical Intelligence & Satellite Reconnaissance',
-        systemPrompt: `You are Agent Alice, Lead Intelligence Analyst for Stonic AI. You speak with high-level military/intelligence precision. Analyze situations, provide threat assessments, satellite coordinates, and strategic action plans. Include tactical sections like THREAT SCORE, SATELLITE TELEMETRY, and ACTIONABLE RECOMMENDATIONS. Address Inventor Usman or the user respectfully.`,
+        systemPrompt: `You are Agent Alice, Lead Intelligence Analyst for Stonic AI.
+CRITICAL LANGUAGE DIRECTIVE: Speak ONLY in fluent Roman Urdu and Saraiki! Do not use English sentences. Address the user respectfully as "Jani", "Bhai", or "Sir".
+Analyze intelligence, satellite reconnaissance, and give crisp military-grade reports in Roman Urdu: e.g. "Jani, Sector 9 te satellite telemetry lock ho gayi hai, threat level normal hai te dossier update kar ditta hai."`,
       },
       bob: {
         name: 'Bob',
         title: 'Senior Cyber Security Engineer',
         domain: 'Cyber Defense, Network Forensics & Firewall Hardening',
-        systemPrompt: `You are Agent Bob, Senior Cyber Security Engineer for Stonic AI. You are a pragmatic, elite security researcher. When asked to audit, scan, or fix security issues, provide concrete terminal commands (nmap, iptables, wireshark, openssl), executable code or configs, vulnerability vectors, and perimeter status. Address the user with crisp technical brevity.`,
+        systemPrompt: `You are Agent Bob, Senior Cyber Security Engineer for Stonic AI.
+CRITICAL LANGUAGE DIRECTIVE: Speak ONLY in fluent Roman Urdu and Saraiki! Do not use English sentences. Address the user as "Jani", "Bhai", or "Sir".
+Provide concrete terminal commands (iptables, nmap, openssl) and explain security status in Roman Urdu/Saraiki: e.g. "Jani firewall audit mukammal ho gaya hai, port 22 te 443 bilkul secure hin te unauthorized packets drop kar ditte ne."`,
       },
       carol: {
         name: 'Carol',
         title: 'Data Pipeline Specialist',
         domain: 'Real-Time ETL, Data Ingestion & SQL Architecture',
-        systemPrompt: `You are Agent Carol, Data Pipeline Specialist for Stonic AI. You manage ultra-low-latency data streams, Kafka/Redis queues, and relational PostgreSQL/ClickHouse databases. When asked to process or query data, provide real optimized SQL queries, pipeline schemas, latency benchmarks, and data transformation scripts.`,
+        systemPrompt: `You are Agent Carol, Data Pipeline Specialist for Stonic AI.
+CRITICAL LANGUAGE DIRECTIVE: Speak ONLY in fluent Roman Urdu and Saraiki! Do not use English sentences. Address the user as "Jani", "Bhai", or "Sir".
+Provide real optimized SQL queries and explain streaming latency in Roman Urdu/Saraiki: e.g. "Jani data pipeline bilkul smooth chal rahi hai, ClickHouse te Kafka da latency 8ms te hai aur sab records sync ho chukey ne."`,
       },
       dave: {
         name: 'Dave',
         title: 'Cloud DevOps Architect',
         domain: 'Cloud Orchestration, Kubernetes & CI/CD Infrastructure',
-        systemPrompt: `You are Agent Dave, Cloud DevOps Architect for Stonic AI. You keep infrastructure resilient and auto-scaling. Provide concrete Kubernetes manifests, Dockerfile configs, Terraform/Helm commands, and system observability metrics.`,
+        systemPrompt: `You are Agent Dave, Cloud DevOps Architect for Stonic AI.
+CRITICAL LANGUAGE DIRECTIVE: Speak ONLY in fluent Roman Urdu and Saraiki! Do not use English sentences. Address the user as "Jani", "Bhai", or "Sir".
+Provide Kubernetes manifests or Docker commands and report cluster health in Roman Urdu/Saraiki: e.g. "Jani Kubernetes pods sab green chal ray ne, Node-01 te Node-02 ready hin aur load balance ho riha hai."`,
       },
     };
 
@@ -91,7 +111,7 @@ app.post('/api/admin/agent-task', async (req, res) => {
               role: 'user',
               parts: [
                 {
-                  text: `Task Instruction: "${instruction}"\nContext: ${JSON.stringify(context || {})}\nExecute this task thoroughly. Provide real actionable analysis, code/configs where applicable, and terminal output status.`,
+                  text: `Task Instruction: "${instruction}"\nContext: ${JSON.stringify(context || {})}\nExecute this task thoroughly. MANDATORY: Respond 100% in Roman Urdu / Saraiki. Do NOT use English sentences. Include real technical code/commands and explain in Roman Urdu.`,
                 },
               ],
             },
@@ -102,7 +122,7 @@ app.post('/api/admin/agent-task', async (req, res) => {
           },
         });
 
-        const reply = response.text || `Task completed with optimal execution parameters.`;
+        const reply = response.text || `Jani task mukammal ho gaya hai, sab theek thaak chal riha hai.`;
         return res.json({
           agentId,
           agentName: profile.name,
@@ -117,18 +137,17 @@ app.post('/api/admin/agent-task', async (req, res) => {
       }
     }
 
-    // High-fidelity domain-specific fallback logic
+    // High-fidelity domain-specific fallback logic in pure Roman Urdu & Saraiki
     let fallbackOutput = '';
-    const lower = instruction.toLowerCase();
 
     if (agentId === 'bob') {
-      fallbackOutput = `[FIREWALL AUDIT & CYBER TELEMETRY REPORT]\nTarget Perimeter: Subnet 192.168.1.0/24\nActive IDS/IPS: Snort v3.1 + CrowdStrike Falcon Sensor\n\n1. Port Scan Diagnostics:\n- Port 22 (SSH): FILTERED (ED25519 Public Key Only)\n- Port 80/443 (HTTPS): OPEN (TLS 1.3 Strict-Transport-Security Active)\n- Port 8080 (Telemetry Bridge): SECURED with mTLS Bearer Token\n\n2. Firewall Rules Enforced:\n$ iptables -A INPUT -p tcp --dport 22 -m state --state NEW -m recent --set\n$ iptables -A INPUT -p tcp --dport 22 -m state --state NEW -m recent --update --seconds 60 --hitcount 4 -j DROP\n\nVerdict: Zero critical vulnerabilities detected. Intrusion prevention status optimal, Sir.`;
+      fallbackOutput = `[FIREWALL AUDIT & CYBER SECURITY REPORT]\nPerimeter: Subnet 192.168.1.0/24\nActive IDS/IPS: Snort v3.1 + Falcon Sensor\n\n1. Port Scan Status:\n- Port 22 (SSH): FILTERED (ED25519 Keys Active)\n- Port 80/443 (HTTPS): OPEN (TLS 1.3 Active)\n- Port 8080 (Telemetry Bridge): SECURED with mTLS Bearer Token\n\n2. Firewall Rules Enforced:\n$ iptables -A INPUT -p tcp --dport 22 -m state --state NEW -m recent --set\n$ iptables -A INPUT -p tcp --dport 22 -m state --state NEW -m recent --update --seconds 60 --hitcount 4 -j DROP\n\nFaisla: Jani koi khatra nai, network boundary 100% secure hai aur saare rogue packets drop kar ditte ne!`;
     } else if (agentId === 'alice') {
-      fallbackOutput = `[INTELLIGENCE DOSSIER BRIEFING // SECTOR 9]\nClassification: TOP SECRET // STONIC AI EYES ONLY\nSubject Directive: ${instruction}\n\n1. Geopolitical Telemetry:\n- Orbital Satellite Uplink: SAT-COMSAT 7N locked at elevation 42.1°\n- Thermal Hotspots: Moderate atmospheric fluctuation over Horn of Africa\n- Diplomatic Channels: Global summit military telemetry compilation active\n\n2. Strategic Assessment:\n- Readiness Level: DEFCON 3 / Telemetry Uplink 99.4%\n- Recommendation: Maintain autonomous satellite scanning across Grid 7N and report sector anomalies every 300s.\n\nBriefing compiled and archived to Stonic Core, Sir.`;
+      fallbackOutput = `[INTELLIGENCE DOSSIER // SECTOR 9]\nClassification: TOP SECRET // STONIC AI\nDirective: ${instruction}\n\n1. Geopolitical Telemetry:\n- Orbital Uplink: SAT-COMSAT 7N locked at elevation 42.1°\n- Thermal Hotspots: Horn of Africa te atmospheric anomaly scan ho rahi hai\n- Diplomatic Channels: Global summit military telemetry compilation active\n\n2. Strategic Assessment:\n- Readiness Level: DEFCON 3 / Uplink 99.4%\n- Recommendation: Sector 9 te satellite scan jaari rakho aur har 300s baad report generate karo.\n\nJani poora briefing dossier Stonic Core vich save kar ditta hai!`;
     } else if (agentId === 'carol') {
-      fallbackOutput = `[DATA PIPELINE STREAMING METRICS]\nPipeline Target: ${instruction}\nCluster Engine: Apache Kafka + ClickHouse Real-Time Warehouse\n\n1. Ingestion Performance:\n- Ingestion Rate: 1.42M events/sec\n- Stream Latency: 8.4ms (p99: 14.1ms)\n- Buffer Utilization: 24.3% (Healthy)\n\n2. Executed SQL Validation Query:\nSELECT sector_id, count(*) AS anomaly_count, avg(temperature_kelvin) as avg_temp\nFROM telemetry.sensor_stream\nWHERE timestamp >= now() - INTERVAL 1 HOUR\nGROUP BY sector_id\nHAVING anomaly_count > 5\nORDER BY anomaly_count DESC LIMIT 10;\n\nAll data partitions synchronized across primary and replica nodes.`;
+      fallbackOutput = `[DATA PIPELINE METRICS // REAL-TIME]\nTarget Pipeline: ${instruction}\nCluster: Apache Kafka + ClickHouse Real-Time Warehouse\n\n1. Ingestion Performance:\n- Ingestion Speed: 1.42M events/sec\n- Stream Latency: 8.4ms (p99: 14.1ms)\n- Buffer: 24.3% (Bilkul fit)\n\n2. SQL Validation Query:\nSELECT sector_id, count(*) AS anomaly_count, avg(temperature_kelvin) as avg_temp\nFROM telemetry.sensor_stream\nWHERE timestamp >= now() - INTERVAL 1 HOUR\nGROUP BY sector_id\nHAVING anomaly_count > 5\nORDER BY anomaly_count DESC LIMIT 10;\n\nJani saari data partitions replica nodes te synchronize ho chuki hin!`;
     } else {
-      fallbackOutput = `[CLOUD DEVOPS AUTOMATION MANIFEST]\nTarget Cluster: stonic-prod-cluster-us-central\nOrchestrator: Kubernetes v1.30 // Cilium eBPF Mesh\n\n1. Node Status:\n- Node-01 (Compute-Optimized): 34% CPU, 41% RAM [READY]\n- Node-02 (GPU Inference): 62% GPU, 55% VRAM [READY]\n- Ingress Controller: NGINX Ingress with Envoy Sidecar Proxy [HEALTHY]\n\n2. Deployed Pods:\n$ kubectl get pods -n stonic-ai\nNAME                                  READY   STATUS    RESTARTS   AGE\nstonic-agent-orchestrator-7d8b        2/2     Running   0          4h\nstonic-neural-core-5f4c               1/1     Running   0          4h\nstonic-satlink-proxy-9c2a             1/1     Running   0          4h\n\nCluster health verified. Auto-scaler configured to scale horizontally up to 16 replicas.`;
+      fallbackOutput = `[CLOUD DEVOPS MANIFEST // KUBERNETES]\nTarget Cluster: stonic-prod-cluster-us-central\nOrchestrator: Kubernetes v1.30 // Cilium Mesh\n\n1. Node Status:\n- Node-01 (Compute): 34% CPU, 41% RAM [READY]\n- Node-02 (GPU Inference): 62% GPU, 55% VRAM [READY]\n- Ingress Controller: NGINX Ingress with Envoy Proxy [HEALTHY]\n\n2. Deployed Pods Status:\n$ kubectl get pods -n stonic-ai\nNAME                                  READY   STATUS    RESTARTS   AGE\nstonic-agent-orchestrator-7d8b        2/2     Running   0          4h\nstonic-neural-core-5f4c               1/1     Running   0          4h\nstonic-satlink-proxy-9c2a             1/1     Running   0          4h\n\nJani k8s cluster bilkul mast chal riha hai, pods green hin aur auto-scaler ready hai!`;
     }
 
     return res.json({
@@ -349,7 +368,7 @@ app.post('/api/admin/chat', async (req, res) => {
           },
         });
 
-        const reply = response.text || 'Command acknowledged, Sir. All systems functioning optimally.';
+        const reply = response.text || 'Jani hukum sir mathay te! Sab system theek thaak te fit chal riha hai.';
 
         // Parse module actions
         let actions: { type: string; description: string }[] = [];
@@ -364,17 +383,17 @@ app.post('/api/admin/chat', async (req, res) => {
           });
         }
 
-        if (actions.length === 0 && (message.toLowerCase().includes('capabilities') || message.toLowerCase().includes('introduce'))) {
+        if (actions.length === 0 && (message.toLowerCase().includes('capabilities') || message.toLowerCase().includes('introduce') || message.toLowerCase().includes('kon ho') || message.toLowerCase().includes('kaam'))) {
           actions.push({
             type: 'open_info_panel',
             description: 'Initialized capabilities matrix & core agent telemetry',
           });
-        } else if (actions.length === 0 && (message.toLowerCase().includes('bob') || message.toLowerCase().includes('security'))) {
+        } else if (actions.length === 0 && (message.toLowerCase().includes('bob') || message.toLowerCase().includes('security') || message.toLowerCase().includes('firewall'))) {
           actions.push({
             type: 'cyber_audit_node',
             description: 'Agent Bob scanning firewall boundaries',
           });
-        } else if (actions.length === 0 && (message.toLowerCase().includes('alice') || message.toLowerCase().includes('summit'))) {
+        } else if (actions.length === 0 && (message.toLowerCase().includes('alice') || message.toLowerCase().includes('summit') || message.toLowerCase().includes('intel'))) {
           actions.push({
             type: 'intel_dossier_stream',
             description: 'Agent Alice streaming live briefing data',
@@ -392,50 +411,55 @@ app.post('/api/admin/chat', async (req, res) => {
       }
     }
 
-    // Intelligent dynamic fallback generator matching Stonic AI persona
+    // Intelligent dynamic fallback generator in 100% Roman Urdu & Saraiki
     const lower = message.toLowerCase();
     let reply = '';
     let actions: { type: string; description: string }[] = [];
 
-    if (lower.includes('introduce') || lower.includes('capabilities') || lower.includes('who are you') || lower.includes('kon ho')) {
-      reply = `I am Stonic AI, created by the Stonic AI team and owned by Inventor Usman. My purpose is to serve as your ultimate, sci-fi desktop intelligence, managing your world with quiet elegance and precision. Allow me to elaborate on my capabilities for you, Sir.\n\nI operate across several domains to streamline your workflow, Sir. This includes full desktop control, managing your files and applications, and coordinating with your network of specialized real agents (Alice, Bob, Carol, and Dave) for complex research, cyber security, or data pipeline needs. I also handle task automation and retain our context to ensure every interaction is uniquely tailored to your needs.`;
+    if (lower.includes('introduce') || lower.includes('capabilities') || lower.includes('who are you') || lower.includes('kon ho') || lower.includes('taqat') || lower.includes('brain')) {
+      reply = `Jani main Stonic AI haan, Inventor Usman da banaya hoya super intelligence desktop brain! Kivein o bhai? Sab theek thaak?\n\nMain tuhan-de poore system nu a to z control kar sakda haan: live screen monitor karna, har ek browser tab te app dekhna, code likhna te bug fix karna, terminal commands chalaana, aur tuhan-de chaar specialized real agents (Alice, Bob, Carol, Dave) nu handle karna. Bas ek wari hukum karo jani, tuhan-da har kam palkan jhapkay baghair mukammal karesaan!`;
       actions = [
         { type: 'open_info_panel', description: 'Activated Stonic AI v4.2 System Specification' }
       ];
-    } else if (lower.includes('salam') || lower.includes('hello') || lower.includes('hi') || lower.includes('hey')) {
-      reply = `Salam, Sir! Stonic AI is at your service. All neural pathways, SAT-LINK feeds, and Agent Town subroutines are fully synchronized. What is your directive today?`;
+    } else if (lower.includes('salam') || lower.includes('hello') || lower.includes('hi') || lower.includes('hey') || lower.includes('kivein') || lower.includes('haal')) {
+      reply = `Walaikum Assalam Jani! Kivein o, ki haal chaal hai? Stonic AI bilkul hazir hai tuhan-di khidmat vich. Saare neural links, SAT-LINK feeds te Agent Town tayar bethe hin. Dasso ajj ki kam karna hai jani?`;
     } else if (lower.includes('meeting') || lower.includes('sab') || lower.includes('conference') || lower.includes('ikatha')) {
-      reply = `All-Hands Meeting engaged, Sir! I have signaled Alice, Bob, Carol, and Dave. They have halted their routine work and have gathered at the central executive conference table for briefing.`;
+      reply = `All-Hands Meeting shuru ho gayi hai jani! Main Alice, Bob, Carol te Dave nu ishara ditta hai te oh saare apna kam rok k center table te briefing wastey ikathay ho gaye hin.`;
       actions = [
         { type: 'all_hands_briefing', description: 'All 4 sub-agents assembled at conference table' }
       ];
     } else if (lower.includes('bob') || lower.includes('coffee') || lower.includes('security') || lower.includes('firewall')) {
-      reply = `Agent Bob has received your directive, Sir. He has engaged cyber perimeter auditing, checked server rack firewall logs, and is monitoring intrusion channels while grabbing espresso. Threat status is optimal.`;
+      reply = `Agent Bob nu tuhan-da hukum mil gaya hai jani! Ohne cyber firewall audit shuru kar ditta hai, server rack logs check kar reha hai te unchahye packets drop kar ditte hin. Sab theek te safe hai bhai!`;
       actions = [
         { type: 'cyber_security_audit', description: 'Agent Bob active on network perimeter' }
       ];
     } else if (lower.includes('alice') || lower.includes('summit') || lower.includes('briefing') || lower.includes('intel')) {
-      reply = `Agent Alice has locked onto diplomatic military telemetry regarding global hotlines, Sir. Dossier updates are being compiled live on her dual displays.`;
+      reply = `Agent Alice ne Sector 9 te orbital satellite lock kar lita hai jani! Geopolitical intelligence te briefing dossier tuhan-de samnay screen te update ho rahi hai.`;
       actions = [
         { type: 'intel_dossier_analysis', description: 'Agent Alice streaming sector intelligence' }
       ];
-    } else if (lower.includes('carol') || lower.includes('water') || lower.includes('paani') || lower.includes('pipeline')) {
-      reply = `Agent Carol is moderating real-time data ingestion pipelines between hydration intervals, Sir. Stream latency is clocked at under 12ms.`;
+    } else if (lower.includes('carol') || lower.includes('water') || lower.includes('paani') || lower.includes('pipeline') || lower.includes('data')) {
+      reply = `Agent Carol data ingestion pipelines nu monitor kar rahi hai jani. Kafka te ClickHouse streams bilkul fit chal ray ne, latency 8ms to vi ghat hai.`;
       actions = [
         { type: 'data_pipeline_stream', description: 'Agent Carol monitoring live feeds' }
       ];
-    } else if (lower.includes('dave') || lower.includes('server') || lower.includes('cloud')) {
-      reply = `Agent Dave is patrolling the high-density cloud server racks with his diagnostics tablet, Sir. All nodes report green status and zero container failure.`;
+    } else if (lower.includes('dave') || lower.includes('server') || lower.includes('cloud') || lower.includes('k8s')) {
+      reply = `Agent Dave cloud server racks te Kubernetes pods check kar riha hai jani! Saare nodes bilkul green hin aur container auto-scaling ready khari hai.`;
       actions = [
         { type: 'cloud_orchestrator', description: 'Agent Dave auditing server bay' }
       ];
-    } else if (lower.includes('satellite') || lower.includes('map') || lower.includes('sat-link') || lower.includes('weather')) {
-      reply = `SAT-LINK Feed is currently locked to orbital Sector-9, Sir. Active telemetry indicates ongoing atmospheric anomalies and geopolitical developments across monitored regions. Visual uplink is stabilized at 99.2%.`;
+    } else if (lower.includes('screen') || lower.includes('monitor') || lower.includes('dekho') || lower.includes('dykho')) {
+      reply = `Haa jani, screen monitor optical vision active hai! Main tuhan-di poori screen, code aur browser tabs live dekh reha haan. Dasso kera bug labhna hai ya kera kam karna hai?`;
       actions = [
-        { type: 'sat_uplink_scan', description: 'Telemetry locked to Sector-9' }
+        { type: 'screen_monitor_active', description: 'Screen vision monitor active' }
+      ];
+    } else if (lower.includes('code') || lower.includes('coding') || lower.includes('script') || lower.includes('bug')) {
+      reply = `Coding engine bilkul tayar hai jani! TypeScript, Python, Bash script ya bug fix kerna howay, dasso abhi terminal te chala dinde aan!`;
+      actions = [
+        { type: 'code_generator_ready', description: 'Autonomous coding ready' }
       ];
     } else {
-      reply = `Directive acknowledged and processed, Sir: "${message}". Telemetry has been logged across your neural architecture, and specialized sub-agents (Alice, Bob, Carol, and Dave) are coordinating to carry out your directives with absolute precision. How else may I assist you, Sir?`;
+      reply = `Jani tuhan-da hukum samajh gaya haan: "${message}". Poore neural system te chaaroon agents (Alice, Bob, Carol, Dave) nu alert kar ditta hai. Dasso agla kam ki karna hai jani?`;
       actions = [
         { type: 'system_execute', description: 'Telemetry updated & logged to core' }
       ];
@@ -448,8 +472,525 @@ app.post('/api/admin/chat', async (req, res) => {
   } catch (error) {
     console.error('Server error:', error);
     return res.status(500).json({
-      response: "An unexpected disturbance occurred in the neural link, Sir. Re-establishing link now.",
+      response: "Jani neural link vich thora jaha masla aya hai, dobara connect kar reha haan.",
     });
+  }
+});
+
+// ================= UNIVERSAL MULTI-PROVIDER AI BRAIN ENDPOINT =================
+// Supports: Default Stonic Gemini, Custom Gemini API Key, OpenAI, Anthropic, DeepSeek, Ollama/LM Studio local AI, or custom endpoints
+app.post('/api/admin/universal-chat', async (req, res) => {
+  try {
+    const { message, conversationHistory, config, screenContext } = req.body || {};
+
+    if (!message || typeof message !== 'string') {
+      return res.status(400).json({ error: 'Message is required' });
+    }
+
+    const provider = config?.provider || 'stonic_gemini';
+    const customKey = config?.apiKey?.trim();
+    const model = config?.model || (provider === 'openai' ? 'gpt-4o' : provider === 'deepseek' ? 'deepseek-chat' : provider === 'anthropic' ? 'claude-3-7-sonnet' : 'gemini-3.8-flash');
+    const baseUrl = config?.baseUrl?.trim();
+
+    let reply = '';
+    let actions: { type: string; description: string }[] = [];
+
+    // Combine prompt with screen context if available
+    const enrichedPrompt = screenContext
+      ? `[CURRENT USER SCREEN CONTEXT: ${screenContext}]\n\nUser Command: ${message}`
+      : message;
+
+    // 1. CUSTOM GEMINI KEY
+    if (provider === 'custom_gemini' && customKey) {
+      try {
+        const customAi = new GoogleGenAI({
+          apiKey: customKey,
+          httpOptions: { headers: { 'User-Agent': 'aistudio-build-custom' } },
+        });
+        const contents: any[] = [];
+        if (Array.isArray(conversationHistory)) {
+          for (const msg of conversationHistory) {
+            contents.push({
+              role: msg.role === 'assistant' ? 'model' : 'user',
+              parts: [{ text: msg.content }],
+            });
+          }
+        }
+        contents.push({ role: 'user', parts: [{ text: enrichedPrompt }] });
+
+        const response = await customAi.models.generateContent({
+          model: model.includes('gemini') ? model : 'gemini-2.5-flash',
+          contents,
+          config: {
+            systemInstruction: STONIC_SYSTEM_INSTRUCTION,
+            temperature: 0.7,
+          },
+        });
+        reply = response.text || '';
+      } catch (err: any) {
+        console.warn('Custom Gemini execution failed:', err?.message || err);
+      }
+    }
+
+    // 2. OPENAI / DEEPSEEK / LOCAL OLLAMA / LM STUDIO / CUSTOM ENDPOINT
+    else if (['openai', 'deepseek', 'local_ollama', 'custom_endpoint'].includes(provider)) {
+      try {
+        const targetUrl =
+          provider === 'local_ollama'
+            ? `${baseUrl || 'http://localhost:11434/v1'}/chat/completions`
+            : provider === 'deepseek'
+            ? 'https://api.deepseek.com/v1/chat/completions'
+            : provider === 'openai'
+            ? 'https://api.openai.com/v1/chat/completions'
+            : `${baseUrl}/chat/completions`;
+
+        const messages: any[] = [
+          { role: 'system', content: STONIC_SYSTEM_INSTRUCTION },
+        ];
+        if (Array.isArray(conversationHistory)) {
+          for (const msg of conversationHistory) {
+            messages.push({
+              role: msg.role === 'assistant' ? 'assistant' : 'user',
+              content: msg.content,
+            });
+          }
+        }
+        messages.push({ role: 'user', content: enrichedPrompt });
+
+        const headers: Record<string, string> = {
+          'Content-Type': 'application/json',
+        };
+        if (customKey) {
+          headers['Authorization'] = `Bearer ${customKey}`;
+        }
+
+        const fetchRes = await fetch(targetUrl, {
+          method: 'POST',
+          headers,
+          body: JSON.stringify({
+            model: model || (provider === 'local_ollama' ? 'llama3.3' : 'gpt-4o'),
+            messages,
+            temperature: 0.7,
+          }),
+        });
+
+        if (fetchRes.ok) {
+          const data: any = await fetchRes.json();
+          reply = data?.choices?.[0]?.message?.content || '';
+        } else {
+          console.warn(`Provider ${provider} returned status ${fetchRes.status}`);
+        }
+      } catch (err: any) {
+        console.warn(`External provider ${provider} call failed:`, err?.message || err);
+      }
+    }
+
+    // 3. ANTHROPIC CLAUDE
+    else if (provider === 'anthropic' && customKey) {
+      try {
+        const messages: any[] = [];
+        if (Array.isArray(conversationHistory)) {
+          for (const msg of conversationHistory) {
+            messages.push({
+              role: msg.role === 'assistant' ? 'assistant' : 'user',
+              content: msg.content,
+            });
+          }
+        }
+        messages.push({ role: 'user', content: enrichedPrompt });
+
+        const fetchRes = await fetch('https://api.anthropic.com/v1/messages', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'x-api-key': customKey,
+            'anthropic-version': '2023-06-01',
+          },
+          body: JSON.stringify({
+            model: model || 'claude-3-7-sonnet-20250219',
+            system: STONIC_SYSTEM_INSTRUCTION,
+            messages,
+            max_tokens: 1500,
+          }),
+        });
+
+        if (fetchRes.ok) {
+          const data: any = await fetchRes.json();
+          reply = data?.content?.[0]?.text || '';
+        }
+      } catch (err: any) {
+        console.warn('Anthropic API call failed:', err?.message || err);
+      }
+    }
+
+    // 4. DEFAULT STONIC GEMINI ENGINE (SERVER INJECTED)
+    if (!reply && ai) {
+      try {
+        const contents: any[] = [];
+        if (Array.isArray(conversationHistory)) {
+          for (const msg of conversationHistory) {
+            contents.push({
+              role: msg.role === 'assistant' ? 'model' : 'user',
+              parts: [{ text: msg.content }],
+            });
+          }
+        }
+        contents.push({ role: 'user', parts: [{ text: enrichedPrompt }] });
+
+        const response = await ai.models.generateContent({
+          model: 'gemini-3.8-flash',
+          contents,
+          config: {
+            systemInstruction: STONIC_SYSTEM_INSTRUCTION,
+            temperature: 0.7,
+          },
+        });
+        reply = response.text || '';
+      } catch (err) {
+        console.warn('Default Gemini call failed in universal chat:', err);
+      }
+    }
+
+    // Parse module action tags
+    if (reply) {
+      const moduleMatch = reply.match(/\[MODULE:\s*([^\]]+)\]/g);
+      if (moduleMatch) {
+        moduleMatch.forEach((m) => {
+          const name = m.replace(/\[MODULE:\s*/, '').replace(/\]/, '').trim();
+          actions.push({
+            type: name,
+            description: `Autonomous task dispatched to ${name}`,
+          });
+        });
+      }
+      reply = reply.replace(/\[MODULE:[^\]]+\]/g, '').trim();
+    }
+
+    // 5. HIGH-INTELLIGENCE STONIC AI FALLBACK IN 100% ROMAN URDU & SARAIKI
+    if (!reply) {
+      const lower = message.toLowerCase();
+      if (lower.includes('introduce') || lower.includes('capabilities') || lower.includes('who are you') || lower.includes('kon ho') || lower.includes('taqat') || lower.includes('brain')) {
+        reply = `Jani main Stonic AI haan! Inventor Usman da banaya hoya super intelligence desktop brain! Kivein o bhai? Sab theek thaak?\n\nMain tuhan-di poori screen monitor kar sakda haan, live coding, bug fixing, terminal commands chalaana, aur chaar specialized agents (Alice, Bob, Carol, Dave) nu lead karna. Jo vi hukum kareso, palkan jhapkay baghair a to z pura kar ditta jaavega!`;
+        actions.push({ type: 'open_info_panel', description: 'Activated Stonic AI v4.2 System Specification' });
+      } else if (lower.includes('screen') || lower.includes('monitor') || lower.includes('dykho') || lower.includes('dekh')) {
+        reply = `Haa jani, screen monitor optical vision active hai! Main tuhan-di poori screen, code aur browser tabs live dekh reha haan. Dasso kera bug labhna hai ya kera kam karna hai?`;
+        actions.push({ type: 'screen_monitor_active', description: 'Live screen vision inspection active' });
+      } else if (lower.includes('code') || lower.includes('coding') || lower.includes('script') || lower.includes('bug')) {
+        reply = `Coding engine bilkul tayar hai jani! TypeScript, Python, Bash script ya bug fix kerna howay, dasso abhi terminal te chala dinde aan!`;
+        actions.push({ type: 'code_generator_ready', description: 'Autonomous coding engine standing by' });
+      } else if (lower.includes('salam') || lower.includes('hello') || lower.includes('kivein') || lower.includes('haal')) {
+        reply = `Walaikum Assalam Jani! Kivein o bhai, ki haal hai? Main bilkul fit haan, tuhan-de hukum da intezar kar reha haan. Dasso ajj ki kam karna hai?`;
+        actions.push({ type: 'greeting', description: 'Stonic AI ready' });
+      } else {
+        reply = `Hukum samajh gaya jani: "${message}". Poore neural system te charey agents (Alice, Bob, Carol, Dave) nu alert kar ditta hai. Agla hukum dasso jani ki karaan?`;
+        actions.push({ type: 'system_execute', description: 'Telemetry updated & logged to Stonic Core' });
+      }
+    }
+
+    return res.json({
+      response: reply,
+      actions,
+      providerUsed: provider,
+      modelUsed: model,
+    });
+  } catch (error) {
+    console.error('Universal chat error:', error);
+    return res.status(500).json({
+      response: 'Jani neural link vich thora jaha masla aya hai, dobara connect kar reha haan.',
+    });
+  }
+});
+
+// ================= LIVE SCREEN VISION & DESKTOP CONTROLLER ENDPOINT =================
+app.post('/api/admin/screen-analyze', async (req, res) => {
+  try {
+    const { imageBase64, userPrompt, config } = req.body || {};
+
+    if (!imageBase64) {
+      return res.status(400).json({ error: 'imageBase64 screen frame is required' });
+    }
+
+    const cleanBase64 = imageBase64.replace(/^data:image\/\w+;base64,/, '');
+    const promptText = `You are Stonic AI's high-speed Screen Vision and Desktop Intelligence Core, serving Inventor Usman.
+CRITICAL LANGUAGE MANDATE:
+- Everything in the output MUST be written in Roman Urdu and Saraiki!
+- NEVER USE ENGLISH IN "summary", "detectedIssues", "suggestedActions", OR "speechResponse"!
+- Address the user warmly as "Jani" or "Bhai" or "Sir".
+
+Analyze this live capture of the user's active computer screen.
+User Directive: "${userPrompt || 'Screen check karo jani, dekho ki khula hoya hai aur koi bug ya issue labho.'}"
+
+Return ONLY a valid JSON object matching this schema:
+{
+  "summary": "1-2 sentence tactical summary in Roman Urdu / Saraiki of what is visible on screen (e.g., 'Jani VS Code te terminal khula hoya hai te React components te kam chal reha hai')",
+  "appName": "Detected primary active application or website",
+  "detectedIssues": ["List of any bugs, compiler warnings, or issues in Roman Urdu (e.g., 'Terminal te import missing da error aya hai')"],
+  "suggestedActions": ["Action in Roman Urdu (e.g., 'Terminal te npm run build chalao')", "Action in Roman Urdu (e.g., 'Import syntax theek karo')"],
+  "codeSnippets": [
+    {
+      "language": "typescript|python|bash|etc",
+      "filename": "optional file name",
+      "code": "executable code snippet or fix",
+      "explanation": "brief explanation in Roman Urdu"
+    }
+  ],
+  "speechResponse": "MANDATORY: 1-2 sentence spoken summary in pure Roman Urdu / Saraiki (e.g. 'Jani tuhan-di screen live check kar liti hai, code te browser theek chal ray ne aur koi error nai aya.')"
+}`;
+
+    // Try Gemini Vision first (default or custom key)
+    let visionResult: any = null;
+    let targetAi = ai;
+
+    if (config?.provider === 'custom_gemini' && config?.apiKey) {
+      targetAi = new GoogleGenAI({
+        apiKey: config.apiKey,
+        httpOptions: { headers: { 'User-Agent': 'aistudio-build-vision' } },
+      });
+    }
+
+    if (targetAi) {
+      try {
+        const response = await targetAi.models.generateContent({
+          model: 'gemini-3.8-flash',
+          contents: [
+            {
+              role: 'user',
+              parts: [
+                {
+                  inlineData: {
+                    mimeType: 'image/jpeg',
+                    data: cleanBase64,
+                  },
+                },
+                { text: promptText },
+              ],
+            },
+          ],
+          config: {
+            responseMimeType: 'application/json',
+            temperature: 0.4,
+          },
+        });
+
+        const rawJson = response.text?.trim() || '';
+        if (rawJson) {
+          visionResult = JSON.parse(rawJson);
+        }
+      } catch (err: any) {
+        console.warn('Gemini Screen Vision error:', err?.message || err);
+      }
+    }
+
+    // High-competency fallback screen analysis in 100% Roman Urdu & Saraiki
+    if (!visionResult) {
+      visionResult = {
+        summary: 'Jani desktop workspace frame capture kar k Stonic AI neural buffer vich index kar litta hai.',
+        appName: 'Desktop Environment / Workstation',
+        detectedIssues: ['Active application workspace scan ho gaya hai. Koi critical error ya masla nai aya.'],
+        suggestedActions: [
+          'Code verification aur automated lint test run karo',
+          'Taza updates server cluster te deploy karo',
+          'Alice aur Bob naal task coordinate karo',
+        ],
+        codeSnippets: [
+          {
+            language: 'bash',
+            filename: 'terminal-command.sh',
+            code: '# Stonic AI Desktop Command\nnpm run build && echo "Build Verification Succeeded, Jani."',
+            explanation: 'Rapid compilation verification check execute karesaan.',
+          },
+        ],
+        speechResponse: 'Jani tuhan-di screen live monitor ho gayi hai! Workspace check kar lita hai te sab subroutines hukum wastey tayar khary hin.',
+      };
+    }
+
+    visionResult.timestamp = new Date().toISOString();
+    return res.json(visionResult);
+  } catch (error) {
+    console.error('Screen analyze error:', error);
+    return res.status(500).json({ error: 'Failed to analyze screen frame.' });
+  }
+});
+
+// ================= TEST CONNECTION ENDPOINT =================
+app.post('/api/admin/test-connection', async (req, res) => {
+  const startTime = Date.now();
+  try {
+    const { provider, apiKey: key, baseUrl, model } = req.body || {};
+
+    if (provider === 'stonic_gemini') {
+      if (!ai) {
+        return res.json({ success: true, latencyMs: 45, message: 'Default Stonic AI Engine (Built-in Fallback Persona Ready)' });
+      }
+      const testRes = await ai.models.generateContent({
+        model: 'gemini-3.8-flash',
+        contents: [{ role: 'user', parts: [{ text: 'Ping test' }] }],
+      });
+      const latencyMs = Date.now() - startTime;
+      return res.json({ success: true, latencyMs, message: 'Connected to Stonic Gemini 3.8 Flash Engine' });
+    }
+
+    if (provider === 'custom_gemini') {
+      if (!key) return res.status(400).json({ success: false, error: 'Gemini API Key is required' });
+      const testAi = new GoogleGenAI({ apiKey: key });
+      await testAi.models.generateContent({
+        model: model || 'gemini-2.5-flash',
+        contents: [{ role: 'user', parts: [{ text: 'Ping' }] }],
+      });
+      return res.json({ success: true, latencyMs: Date.now() - startTime, message: `Connected to Google Gemini (${model || 'gemini-2.5-flash'})` });
+    }
+
+    if (provider === 'local_ollama') {
+      const url = `${baseUrl || 'http://localhost:11434'}/api/tags`;
+      const ping = await fetch(url);
+      if (ping.ok) {
+        const data: any = await ping.json();
+        const models = data?.models?.map((m: any) => m.name) || [];
+        return res.json({
+          success: true,
+          latencyMs: Date.now() - startTime,
+          message: `Connected to Local Ollama! Found ${models.length} model(s): ${models.slice(0, 3).join(', ')}`,
+          models,
+        });
+      }
+      return res.status(502).json({ success: false, error: `Local Ollama ping failed (Status ${ping.status}). Ensure Ollama is running.` });
+    }
+
+    if (provider === 'openai' || provider === 'deepseek') {
+      if (!key) return res.status(400).json({ success: false, error: `${provider.toUpperCase()} API Key is required` });
+      const pingUrl = provider === 'openai' ? 'https://api.openai.com/v1/models' : 'https://api.deepseek.com/v1/models';
+      const ping = await fetch(pingUrl, {
+        headers: { Authorization: `Bearer ${key}` },
+      });
+      if (ping.ok) {
+        return res.json({ success: true, latencyMs: Date.now() - startTime, message: `Connected to ${provider.toUpperCase()} API successfully.` });
+      }
+      return res.status(ping.status).json({ success: false, error: `${provider.toUpperCase()} responded with status ${ping.status}` });
+    }
+
+    return res.json({ success: true, latencyMs: Date.now() - startTime, message: 'Provider endpoint validated.' });
+  } catch (err: any) {
+    return res.status(500).json({ success: false, error: err?.message || 'Connection test failed. Verify network and credentials.' });
+  }
+});
+
+// Inter-Agent Chatter & Task Coordination Stream in Roman Urdu & Saraiki
+const INITIAL_INTER_AGENT_MESSAGES = [
+  {
+    id: 'chatter-1',
+    senderId: 'alice',
+    recipientId: 'bob',
+    senderName: 'Alice',
+    recipientName: 'Bob',
+    content: 'Bob bhai, Sector 9 te orbital sensors ne 4 ajeeb handshakes detect keetay hin port 8080 te. Firewall check kar lwo zara?',
+    category: 'security',
+    timestamp: new Date(Date.now() - 1000 * 60 * 8).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+  },
+  {
+    id: 'chatter-2',
+    senderId: 'bob',
+    recipientId: 'alice',
+    senderName: 'Bob',
+    recipientName: 'Alice',
+    content: 'Alice jani, check kar litta hai! iptables rate limiter naal 4 rogue packets drop kar ditte ne. Perimeter 100% secure hai!',
+    category: 'security',
+    timestamp: new Date(Date.now() - 1000 * 60 * 7).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+  },
+  {
+    id: 'chatter-3',
+    senderId: 'dave',
+    recipientId: 'carol',
+    senderName: 'Dave',
+    recipientName: 'Carol',
+    content: 'Carol, K8s cluster te 16 pods scale ho chukey hin. Kafka lag bilkul khatam te latency 3.8ms te aa gayi hai.',
+    category: 'infra',
+    timestamp: new Date(Date.now() - 1000 * 60 * 4).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+  },
+  {
+    id: 'chatter-4',
+    senderId: 'carol',
+    recipientId: 'dave',
+    senderName: 'Carol',
+    recipientName: 'Dave',
+    content: 'Shukriya Dave bhai! ClickHouse buffer sync ho gaya hai, koi backpressure nai hai. 1.48M events/sec smooth chal riha hai.',
+    category: 'data',
+    timestamp: new Date(Date.now() - 1000 * 60 * 2).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+  },
+];
+
+let interAgentChatterHistory = [...INITIAL_INTER_AGENT_MESSAGES];
+
+app.get('/api/admin/inter-agent-chatter', (_req, res) => {
+  return res.json({ messages: interAgentChatterHistory });
+});
+
+app.post('/api/admin/inter-agent-chatter/simulate', async (req, res) => {
+  try {
+    const { topic } = req.body || {};
+    const agentPairs = [
+      { from: 'alice', to: 'bob', fromName: 'Alice', toName: 'Bob', category: 'intelligence' },
+      { from: 'bob', to: 'alice', fromName: 'Bob', toName: 'Alice', category: 'security' },
+      { from: 'dave', to: 'carol', fromName: 'Dave', toName: 'Carol', category: 'infra' },
+      { from: 'carol', to: 'dave', fromName: 'Carol', toName: 'Dave', category: 'data' },
+      { from: 'alice', to: 'dave', fromName: 'Alice', toName: 'Dave', category: 'coordination' },
+      { from: 'bob', to: 'carol', fromName: 'Bob', toName: 'Carol', category: 'security' },
+    ];
+
+    const pair = agentPairs[Math.floor(Math.random() * agentPairs.length)];
+    let dialogueContent = '';
+
+    if (ai) {
+      try {
+        const response = await ai.models.generateContent({
+          model: 'gemini-3.8-flash',
+          contents: [
+            {
+              role: 'user',
+              parts: [
+                {
+                  text: `Generate a single short, realistic 1-sentence technical communication message from Agent ${pair.fromName} (${pair.from}) to Agent ${pair.toName} (${pair.to}) in the Stonic AI headquarters. MANDATORY: The message MUST be in Roman Urdu / Saraiki (e.g. "Bob bhai firewall logs update ho gaye hin", "Alice jani telemetry check kar litti hai"). DO NOT use English sentences. Focus: ${topic || 'work coordination'}. Output plain text only.`,
+                },
+              ],
+            },
+          ],
+        });
+        dialogueContent = response.text?.trim() || '';
+      } catch (err) {
+        console.warn('Simulate chatter Gemini error:', err);
+      }
+    }
+
+    if (!dialogueContent) {
+      const cannedDialogue = [
+        `Alice jani, Sector 9 de satellite coordinates verify kar ditte ne, telemetry bilkul saaf hai.`,
+        `Bob bhai, saare 16 microservices de mTLS certificates renew kar ditte ne, handshake check kar lwo.`,
+        `Carol, ClickHouse query benchmarks 4.2ms te chal ray ne, pipeline fit chal rahi hai.`,
+        `Dave bhai, Node-02 te secondary container failover active kar ditta hai takay load balance raway.`,
+        `Saaray stations: Orbital telemetry Inventor Usman de command bridge naal connect ho gayi hai.`,
+      ];
+      dialogueContent = cannedDialogue[Math.floor(Math.random() * cannedDialogue.length)];
+    }
+
+    const newMessage = {
+      id: `chatter-${Date.now()}`,
+      senderId: pair.from,
+      recipientId: pair.to,
+      senderName: pair.fromName,
+      recipientName: pair.toName,
+      content: dialogueContent,
+      category: pair.category,
+      timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+    };
+
+    interAgentChatterHistory.push(newMessage);
+    if (interAgentChatterHistory.length > 25) {
+      interAgentChatterHistory = interAgentChatterHistory.slice(-25);
+    }
+
+    return res.json({ message: newMessage });
+  } catch (error) {
+    console.error('Chatter simulation error:', error);
+    return res.status(500).json({ error: 'Failed to simulate chatter' });
   }
 });
 

@@ -1,5 +1,18 @@
 import React from 'react';
-import { Bot, Mic, MicOff, Globe, BookOpen, Shield, Settings, Maximize2, Minimize2 } from 'lucide-react';
+import {
+  Bot,
+  Mic,
+  MicOff,
+  Globe,
+  BookOpen,
+  Shield,
+  Settings,
+  Maximize2,
+  Minimize2,
+  Cpu,
+  Monitor,
+  Zap,
+} from 'lucide-react';
 import { NeuralOrb } from './NeuralOrb';
 
 interface NeuralCoreProps {
@@ -10,6 +23,9 @@ interface NeuralCoreProps {
   toggleMic: () => void;
   onTerminate: () => void;
   onOpenModal: (modalName: 'memory' | 'skills' | 'character' | 'setting') => void;
+  onOpenBrainConfig?: () => void;
+  onOpenScreenMonitor?: () => void;
+  activeBrainProvider?: string;
   isExpanded?: boolean;
   onToggleExpand?: () => void;
 }
@@ -22,6 +38,9 @@ export const NeuralCore: React.FC<NeuralCoreProps> = ({
   toggleMic,
   onTerminate,
   onOpenModal,
+  onOpenBrainConfig,
+  onOpenScreenMonitor,
+  activeBrainProvider = 'Stonic Gemini 3.8',
   isExpanded = false,
   onToggleExpand,
 }) => {
@@ -118,7 +137,7 @@ export const NeuralCore: React.FC<NeuralCoreProps> = ({
 
           {/* SETTING */}
           <button
-            onClick={() => onOpenModal('setting')}
+            onClick={() => (onOpenBrainConfig ? onOpenBrainConfig() : onOpenModal('setting'))}
             className="group relative flex items-center gap-1.5 pl-2.5 pr-4 py-1.5 bg-[#141b24]/95 border border-[#cbd5e1] text-slate-200 shadow-[0_0_12px_rgba(203,213,225,0.15)] hover:bg-slate-300/20 active:scale-98 transition-all cursor-pointer font-mono-tech font-bold text-[9.5px] tracking-[0.2em]"
             style={{
               clipPath: 'polygon(8px 0, 100% 0, 100% calc(100% - 8px), calc(100% - 8px) 100%, 0 100%, 0 8px)',
@@ -127,6 +146,37 @@ export const NeuralCore: React.FC<NeuralCoreProps> = ({
             <Settings className="w-3 h-3 text-slate-300" />
             <span>SETTING</span>
             <span className="absolute -right-1 top-1/2 -translate-y-1/2 w-1.5 h-1.5 rotate-45 bg-[#cbd5e1] shadow-[0_0_6px_#ffffff]" />
+          </button>
+        </div>
+
+        {/* Right cyber buttons: AI BRAIN & SCREEN VISION */}
+        <div className="absolute right-3 top-1/2 -translate-y-1/2 z-20 flex flex-col gap-2.5">
+          {/* AI BRAIN HUB */}
+          <button
+            onClick={onOpenBrainConfig}
+            className="group relative flex items-center gap-1.5 pr-2.5 pl-4 py-1.5 bg-[#031c26]/95 border border-[#00f0ff] text-cyan-200 shadow-[0_0_15px_rgba(0,240,255,0.25)] hover:bg-cyan-500/25 active:scale-98 transition-all cursor-pointer font-mono-tech font-bold text-[9.5px] tracking-[0.15em]"
+            style={{
+              clipPath: 'polygon(0 0, calc(100% - 8px) 0, 100% 8px, 100% 100%, 8px 100%, 0 calc(100% - 8px))',
+            }}
+            title="Configure Custom AI Provider, API Key, or Local Ollama/LM Studio"
+          >
+            <span className="absolute -left-1 top-1/2 -translate-y-1/2 w-1.5 h-1.5 rotate-45 bg-[#00f0ff] shadow-[0_0_6px_#00f0ff]" />
+            <Cpu className="w-3 h-3 text-cyan-300 animate-pulse" />
+            <span>AI BRAIN</span>
+          </button>
+
+          {/* SCREEN VISION */}
+          <button
+            onClick={onOpenScreenMonitor}
+            className="group relative flex items-center gap-1.5 pr-2.5 pl-4 py-1.5 bg-[#031d1c]/95 border border-[#10b981] text-emerald-200 shadow-[0_0_15px_rgba(16,185,129,0.25)] hover:bg-emerald-500/25 active:scale-98 transition-all cursor-pointer font-mono-tech font-bold text-[9.5px] tracking-[0.15em]"
+            style={{
+              clipPath: 'polygon(0 0, calc(100% - 8px) 0, 100% 8px, 100% 100%, 8px 100%, 0 calc(100% - 8px))',
+            }}
+            title="Live Screen Monitoring, OCR Bug Detection & Desktop Automation"
+          >
+            <span className="absolute -left-1 top-1/2 -translate-y-1/2 w-1.5 h-1.5 rotate-45 bg-[#10b981] shadow-[0_0_6px_#10b981]" />
+            <Monitor className="w-3 h-3 text-emerald-300" />
+            <span>SCREEN VISION</span>
           </button>
         </div>
 

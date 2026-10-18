@@ -10,8 +10,17 @@ import {
   ArrowUp,
   Loader2,
   Sliders,
+  Radio,
+  Sparkles,
+  Bot,
 } from 'lucide-react';
 import { ChatMessage } from '../types';
+import { InterAgentChatter } from './InterAgentChatter';
+
+import alicePortraitImg from '../assets/images/alice_portrait.jpg';
+import bobPortraitImg from '../assets/images/bob_portrait.jpg';
+import carolPortraitImg from '../assets/images/carol_portrait.jpg';
+import davePortraitImg from '../assets/images/dave_portrait.jpg';
 
 interface VoiceConsoleProps {
   messages: ChatMessage[];
@@ -22,7 +31,22 @@ interface VoiceConsoleProps {
   onOpenInfoPanel: () => void;
   isExpanded?: boolean;
   onToggleExpand?: () => void;
+  onSelectAgent?: (agentId: string) => void;
 }
+
+const AGENT_PORTRAITS: Record<string, string> = {
+  alice: alicePortraitImg,
+  bob: bobPortraitImg,
+  carol: carolPortraitImg,
+  dave: davePortraitImg,
+};
+
+const AGENT_COLORS: Record<string, string> = {
+  alice: '#f472b6',
+  bob: '#38bdf8',
+  carol: '#34d399',
+  dave: '#fbbf24',
+};
 
 export const VoiceConsole: React.FC<VoiceConsoleProps> = ({
   messages,
@@ -33,8 +57,9 @@ export const VoiceConsole: React.FC<VoiceConsoleProps> = ({
   onOpenInfoPanel,
   isExpanded = false,
   onToggleExpand,
+  onSelectAgent,
 }) => {
-  const [activeTab, setActiveTab] = useState<'voice' | 'agent' | 'notes'>('voice');
+  const [activeTab, setActiveTab] = useState<'voice' | 'inter-agent' | 'notes'>('voice');
   const [inputText, setInputText] = useState('');
   const [notes, setNotes] = useState<string>(
     `# STONIC AI MISSION DIRECTIVES\n- Creator: Stonic AI Team\n- Owner: Inventor Usman (https://stonicai.com/)\n- Status: Desktop AI Active\n- Sub-agents: Alice, Bob, Carol, Dave\n- Sector: 9 / Uplink 99.2%`
@@ -64,20 +89,38 @@ export const VoiceConsole: React.FC<VoiceConsoleProps> = ({
     >
       {/* Top Header & Tabs matching screenshot */}
       <div className="flex items-center justify-between px-4 py-2 border-b border-cyan-500/20 bg-[#030d17]/90">
-        <div className="flex items-center gap-5">
-          {(['voice', 'agent', 'notes'] as const).map((tab) => (
-            <button
-              key={tab}
-              onClick={() => setActiveTab(tab)}
-              className={`font-mono-tech text-[11px] font-bold tracking-[0.25em] pb-1 border-b-2 transition-all cursor-pointer ${
-                activeTab === tab
-                  ? 'border-cyan-400 text-cyan-200 shadow-[0_2px_8px_rgba(0,240,255,0.3)]'
-                  : 'border-transparent text-cyan-600 hover:text-cyan-400'
-              }`}
-            >
-              {tab.toUpperCase()}
-            </button>
-          ))}
+        <div className="flex items-center gap-4">
+          <button
+            onClick={() => setActiveTab('voice')}
+            className={`font-mono-tech text-[11px] font-bold tracking-[0.25em] pb-1 border-b-2 transition-all cursor-pointer ${
+              activeTab === 'voice'
+                ? 'border-cyan-400 text-cyan-200 shadow-[0_2px_8px_rgba(0,240,255,0.3)]'
+                : 'border-transparent text-cyan-600 hover:text-cyan-400'
+            }`}
+          >
+            VOICE
+          </button>
+          <button
+            onClick={() => setActiveTab('inter-agent')}
+            className={`flex items-center gap-1 font-mono-tech text-[11px] font-bold tracking-[0.25em] pb-1 border-b-2 transition-all cursor-pointer ${
+              activeTab === 'inter-agent'
+                ? 'border-cyan-400 text-cyan-200 shadow-[0_2px_8px_rgba(0,240,255,0.3)]'
+                : 'border-transparent text-cyan-600 hover:text-cyan-400'
+            }`}
+          >
+            <Radio className="w-3 h-3 text-cyan-400 animate-pulse" />
+            <span>INTER-AGENT</span>
+          </button>
+          <button
+            onClick={() => setActiveTab('notes')}
+            className={`font-mono-tech text-[11px] font-bold tracking-[0.25em] pb-1 border-b-2 transition-all cursor-pointer ${
+              activeTab === 'notes'
+                ? 'border-cyan-400 text-cyan-200 shadow-[0_2px_8px_rgba(0,240,255,0.3)]'
+                : 'border-transparent text-cyan-600 hover:text-cyan-400'
+            }`}
+          >
+            NOTES
+          </button>
         </div>
 
         {/* Right action icons */}
@@ -112,66 +155,93 @@ export const VoiceConsole: React.FC<VoiceConsoleProps> = ({
       {/* Tab 1: VOICE CHAT FEED */}
       {activeTab === 'voice' && (
         <div className="flex-1 overflow-y-auto px-4 py-4 space-y-4">
-          {messages.map((msg, index) => (
-            <div key={msg.id} className="space-y-1">
-              {msg.role === 'assistant' ? (
-                /* Assistant Message */
-                <div className="space-y-1">
-                  {/* First message in screenshot doesn't show • STONIC AI tag above it */}
-                  {index !== 0 && (
-                    <div className="flex items-center gap-1.5 text-cyan-300 font-mono-tech text-[9.5px] font-bold tracking-widest pt-1">
-                      <span className="w-1.5 h-1.5 rounded-full bg-cyan-400 shadow-[0_0_6px_#00f0ff]" />
-                      <span>STONIC AI</span>
-                    </div>
-                  )}
+          {messages.map((msg, index) => {
+            const agentPortrait = msg.agentId ? AGENT_PORTRAITS[msg.agentId] : null;
+            const agentColor = msg.agentId ? AGENT_COLORS[msg.agentId] : '#00f0ff';
 
-                  {/* Module action box if present (e.g. open_info_panel) */}
-                  {msg.actions && msg.actions.length > 0 && (
-                    <div className="my-1.5">
-                      {msg.actions.map((act, i) => (
-                        <div
-                          key={i}
-                          onClick={onOpenInfoPanel}
-                          className="flex items-center justify-between px-3 py-1.5 rounded bg-[#031d28]/90 border border-cyan-400/50 text-cyan-300 font-mono-tech text-[10px] cursor-pointer hover:border-cyan-300 transition-all shadow-[0_0_12px_rgba(0,240,255,0.15)]"
-                        >
-                          <div className="flex items-center gap-2">
-                            <Sliders className="w-3.5 h-3.5 text-cyan-400 animate-spin" />
-                            <span>
-                              Module: <strong className="text-white font-mono">{act.type}</strong>
-                            </span>
-                          </div>
-                          <div className="flex items-center gap-1 text-cyan-400/80">
-                            <span>&gt; 0.4s &gt;</span>
-                          </div>
+            return (
+              <div key={msg.id} className="space-y-1">
+                {msg.role === 'assistant' ? (
+                  /* Assistant / Agent Message */
+                  <div className="space-y-1">
+                    {/* Header Tag with Agent Avatar if addressing an agent */}
+                    <div className="flex items-center gap-2 text-cyan-300 font-mono-tech text-[10px] font-bold tracking-widest pt-1">
+                      {agentPortrait ? (
+                        <div className="flex items-center gap-1.5">
+                          <img
+                            src={agentPortrait}
+                            alt={msg.agentName || 'Agent'}
+                            className="w-4 h-4 rounded-full object-cover border"
+                            style={{ borderColor: agentColor }}
+                          />
+                          <span style={{ color: agentColor }}>
+                            AGENT {msg.agentName ? msg.agentName.toUpperCase() : 'AGENT'}
+                          </span>
                         </div>
-                      ))}
+                      ) : (
+                        index !== 0 && (
+                          <div className="flex items-center gap-1.5">
+                            <span className="w-1.5 h-1.5 rounded-full bg-cyan-400 shadow-[0_0_6px_#00f0ff]" />
+                            <span>STONIC AI // CORE</span>
+                          </div>
+                        )
+                      )}
                     </div>
-                  )}
 
-                  <div className="p-3.5 rounded-lg bg-[#061e29]/70 border border-cyan-500/25 text-cyan-50 text-[12.5px] leading-relaxed shadow-[0_0_15px_rgba(0,240,255,0.04)] font-sans whitespace-pre-line">
-                    {msg.content}
+                    {/* Module action box if present */}
+                    {msg.actions && msg.actions.length > 0 && (
+                      <div className="my-1.5">
+                        {msg.actions.map((act, i) => (
+                          <div
+                            key={i}
+                            onClick={onOpenInfoPanel}
+                            className="flex items-center justify-between px-3 py-1.5 rounded bg-[#031d28]/90 border border-cyan-400/50 text-cyan-300 font-mono-tech text-[10px] cursor-pointer hover:border-cyan-300 transition-all shadow-[0_0_12px_rgba(0,240,255,0.15)]"
+                          >
+                            <div className="flex items-center gap-2">
+                              <Sliders className="w-3.5 h-3.5 text-cyan-400 animate-spin" />
+                              <span>
+                                Module: <strong className="text-white font-mono">{act.type}</strong>
+                              </span>
+                            </div>
+                            <div className="flex items-center gap-1 text-cyan-400/80">
+                              <span>&gt; 0.4s &gt;</span>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+
+                    <div
+                      className="p-3.5 rounded-lg border text-cyan-50 text-[12.5px] leading-relaxed shadow-[0_0_15px_rgba(0,240,255,0.04)] font-sans whitespace-pre-line"
+                      style={{
+                        backgroundColor: msg.agentId ? 'rgba(3, 20, 32, 0.85)' : '#061e29/70',
+                        borderColor: msg.agentId ? `${agentColor}50` : 'rgba(6, 182, 212, 0.25)',
+                      }}
+                    >
+                      {msg.content}
+                    </div>
                   </div>
-                </div>
-              ) : (
-                /* User Message */
-                <div className="flex flex-col items-end space-y-1 pt-1">
-                  <div className="flex items-center gap-1.5 text-cyan-400/80 font-mono-tech text-[9.5px] font-bold tracking-widest">
-                    <span>YOU</span>
-                    <span className="w-1.5 h-1.5 rounded-full bg-cyan-400" />
+                ) : (
+                  /* User Message */
+                  <div className="flex flex-col items-end space-y-1 pt-1">
+                    <div className="flex items-center gap-1.5 text-cyan-400/80 font-mono-tech text-[9.5px] font-bold tracking-widest">
+                      <span>YOU</span>
+                      <span className="w-1.5 h-1.5 rounded-full bg-cyan-400" />
+                    </div>
+                    <div className="p-3 rounded-lg bg-[#041924]/90 border border-cyan-500/20 text-cyan-100 text-[12.5px] leading-relaxed max-w-[88%] text-left font-sans">
+                      {msg.content}
+                    </div>
                   </div>
-                  <div className="p-3 rounded-lg bg-[#041924]/90 border border-cyan-500/20 text-cyan-100 text-[12.5px] leading-relaxed max-w-[88%] text-left font-sans">
-                    {msg.content}
-                  </div>
-                </div>
-              )}
-            </div>
-          ))}
+                )}
+              </div>
+            );
+          })}
 
           {/* Loading Indicator */}
           {isLoading && (
             <div className="flex items-center gap-2 text-cyan-400/90 font-mono-tech text-xs p-2">
               <Loader2 className="w-4 h-4 animate-spin text-cyan-300" />
-              <span className="tracking-widest">STONIC AI IS SYNTHESIZING RESPONSE...</span>
+              <span className="tracking-widest">STONIC AI JAWAB TYAR KAR REHA HAI...</span>
             </div>
           )}
 
@@ -179,38 +249,14 @@ export const VoiceConsole: React.FC<VoiceConsoleProps> = ({
         </div>
       )}
 
-      {/* Tab 2: AGENT MANAGEMENT */}
-      {activeTab === 'agent' && (
-        <div className="flex-1 overflow-y-auto p-4 space-y-3 font-mono-tech text-xs">
-          <div className="p-3 rounded bg-[#031d28]/70 border border-cyan-500/30">
-            <span className="text-cyan-400 font-bold block mb-1">COGNITIVE AGENT NETWORK</span>
-            <p className="text-cyan-200 text-[11px] leading-relaxed">
-              Stonic AI autonomously routes high-dimensional reasoning tasks to specialized agents:
-              Alice (Intelligence), Bob (Cyber Security), Carol (Data Pipelines), and Dave (Automation).
-            </p>
-          </div>
-
-          <div className="space-y-2">
-            {[
-              { name: 'Alice', spec: 'Intelligence Analyst', status: 'Online - Monitoring Sector 9' },
-              { name: 'Bob', spec: 'Network Sentinel', status: 'Online - Scanning Government Registries' },
-              { name: 'Carol', spec: 'Data Stream Moderator', status: 'Active - Hydration Routine' },
-              { name: 'Dave', spec: 'Orbital Choreographer', status: 'Active - Telemetry Queued' },
-            ].map((ag) => (
-              <div key={ag.name} className="p-2.5 rounded bg-[#051624] border border-cyan-500/20 flex items-center justify-between">
-                <div>
-                  <div className="text-cyan-300 font-bold">{ag.name} // {ag.spec}</div>
-                  <div className="text-[10px] text-cyan-400/70">{ag.status}</div>
-                </div>
-                <button
-                  onClick={() => onSendMessage(`Tell agent ${ag.name} to compile a briefing for Inventor Usman.`)}
-                  className="px-2 py-1 rounded bg-cyan-500/20 border border-cyan-400/60 text-cyan-200 text-[10px] hover:bg-cyan-500/40 cursor-pointer"
-                >
-                  Dispatch
-                </button>
-              </div>
-            ))}
-          </div>
+      {/* Tab 2: INTER-AGENT CHATTER FEED */}
+      {activeTab === 'inter-agent' && (
+        <div className="flex-1 overflow-hidden p-1 min-h-0">
+          <InterAgentChatter
+            onAgentFocus={(id) => {
+              if (onSelectAgent) onSelectAgent(id);
+            }}
+          />
         </div>
       )}
 
@@ -229,19 +275,53 @@ export const VoiceConsole: React.FC<VoiceConsoleProps> = ({
         </div>
       )}
 
-      {/* Ambient Audio Waveform Dot right above capsule input */}
-      <div className="flex justify-end px-6 py-0.5">
-        <span className="w-2 h-2 rounded-full bg-cyan-400 animate-pulse shadow-[0_0_8px_#00f0ff]" />
+      {/* Quick Action Chips in Roman Urdu & Saraiki */}
+      <div className="px-3 py-1 flex items-center gap-1.5 overflow-x-auto no-scrollbar border-t border-cyan-500/10 bg-[#020912]">
+        <button
+          type="button"
+          onClick={() => onSendMessage('Jani meri screen dekho aur active window te code check karo')}
+          className="px-2 py-0.5 rounded-full bg-cyan-500/10 border border-cyan-500/30 text-cyan-300 text-[9px] font-mono-tech hover:bg-cyan-500/25 whitespace-nowrap cursor-pointer transition-colors"
+        >
+          🖥️ Screen Dekho Jani
+        </button>
+        <button
+          type="button"
+          onClick={() => onSendMessage('Jani apna full intro karao aur daso ki ki taqat hai tuhan-day brain kol?')}
+          className="px-2 py-0.5 rounded-full bg-cyan-500/10 border border-cyan-500/30 text-cyan-300 text-[9px] font-mono-tech hover:bg-cyan-500/25 whitespace-nowrap cursor-pointer transition-colors"
+        >
+          🧠 Stonic Brain Intro
+        </button>
+        <button
+          type="button"
+          onClick={() => onSendMessage('Jani code bug fix karo aur terminal command run karo')}
+          className="px-2 py-0.5 rounded-full bg-cyan-500/10 border border-cyan-500/30 text-cyan-300 text-[9px] font-mono-tech hover:bg-cyan-500/25 whitespace-nowrap cursor-pointer transition-colors"
+        >
+          💻 Code Fix & Run
+        </button>
+        <button
+          type="button"
+          onClick={() => onSendMessage('Bob bhai: network firewall te port security audit karo')}
+          className="px-2 py-0.5 rounded-full bg-cyan-500/10 border border-cyan-500/30 text-cyan-300 text-[9px] font-mono-tech hover:bg-cyan-500/25 whitespace-nowrap cursor-pointer transition-colors"
+        >
+          🛡️ Bob: Firewall Scan
+        </button>
+        <button
+          type="button"
+          onClick={() => onSendMessage('Kivein o jani? Haal sunao te saraiki vich gall karo!')}
+          className="px-2 py-0.5 rounded-full bg-cyan-500/10 border border-cyan-500/30 text-cyan-300 text-[9px] font-mono-tech hover:bg-cyan-500/25 whitespace-nowrap cursor-pointer transition-colors"
+        >
+          🗣️ Saraiki / Roman Urdu
+        </button>
       </div>
 
       {/* Bottom Capsule Input matching screenshot */}
-      <div className="p-3 border-t border-cyan-500/20 bg-[#030d17]/90">
+      <div className="p-2.5 bg-[#030d17]/90">
         <form onSubmit={handleSubmit} className="relative flex items-center">
           <input
             type="text"
             value={inputText}
             onChange={(e) => setInputText(e.target.value)}
-            placeholder="Type to Assistant (Gemini Live)..."
+            placeholder="Hukum karo jani (e.g. 'Screen dekho', 'Bob firewall check kar', 'Coding karo')..."
             disabled={isLoading}
             className="w-full pl-4 pr-20 py-2.5 rounded-full bg-[#020a12]/95 border border-cyan-500/40 text-cyan-50 placeholder-cyan-600/70 text-xs font-sans focus:outline-none focus:border-cyan-300 shadow-[inset_0_0_15px_rgba(0,240,255,0.06)]"
           />

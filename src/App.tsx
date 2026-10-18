@@ -4,7 +4,9 @@ import { NeuralCore } from './components/NeuralCore';
 import { AgentTown } from './components/AgentTown';
 import { VoiceConsole } from './components/VoiceConsole';
 import { Modals } from './components/Modals';
-import { ChatMessage, AgentInfo } from './types';
+import { BrainConfigModal, DEFAULT_BRAIN_CONFIG } from './components/BrainConfigModal';
+import { ScreenMonitorDeck } from './components/ScreenMonitorDeck';
+import { ChatMessage, AgentInfo, BrainConfig } from './types';
 import {
   Maximize2,
   Minimize2,
@@ -12,6 +14,8 @@ import {
   Bot,
   Box,
   MessageSquare,
+  Cpu,
+  Monitor,
 } from 'lucide-react';
 
 const INITIAL_MESSAGES: ChatMessage[] = [
@@ -19,33 +23,33 @@ const INITIAL_MESSAGES: ChatMessage[] = [
     id: 'msg-1',
     role: 'assistant',
     content:
-      'I am Stonic AI, created by the Stonic AI team and owned by Inventor Usman. I am at your service, Sir, to assist with any tasks you require.',
+      'Jani main Stonic AI haan, Inventor Usman da banaya hoya super intelligence desktop brain! Kivein o bhai, ki haal hai? Main tuhan-di khidmat vich bilkul hazir haan.',
     timestamp: new Date(Date.now() - 1000 * 60 * 12),
   },
   {
     id: 'msg-2',
     role: 'user',
-    content: 'Introduce your capabilities.',
+    content: 'Jani daso tuhan-da brain ki ki kar sakda hai aur tuhan-de kol kede kede agents hin?',
     timestamp: new Date(Date.now() - 1000 * 60 * 10),
   },
   {
     id: 'msg-3',
     role: 'assistant',
     content:
-      'I am here to manage your digital world, Sir. My capabilities include executing desktop commands, managing your files and tasks, and handling communications. For more complex matters, I can coordinate with your specialized agents.',
+      'Haa jani! Mera brain a to z poora computer te desktop control kar sakda hai: live screen monitor karna, har ek tab te browser dekhna, coding kerna te bugs theek karna, terminal commands run karna, aur mere kol chaar specialized real agents hin—Alice (Lead Intelligence), Bob (Cyber Security), Carol (Data Pipelines), aur Dave (Cloud DevOps)!',
     timestamp: new Date(Date.now() - 1000 * 60 * 8),
   },
   {
     id: 'msg-4',
     role: 'user',
-    content: 'Introduce yourself and introduce your capabilities in details full explanation.',
+    content: 'Jani screen vi monitor kar sakde o aur jo kam bolo wo screen per monitor karega?',
     timestamp: new Date(Date.now() - 1000 * 60 * 6),
   },
   {
     id: 'msg-5',
     role: 'assistant',
     content:
-      'I am Stonic AI, created by the Stonic AI team and owned by Inventor Usman. My purpose is to serve as your ultimate, sci-fi desktop intelligence, managing your world with quiet elegance and precision. Allow me to elaborate on my capabilities for you, Sir.',
+      'Bilkul jani! Ek wari hukum karo ya awaz maro, Optical Screen Vision live screen capture kar k tabs, code, browser ya terminal te har ek maslay nu scan karega aur live fix karega. Dasso jani hun kehri command execute karaan?',
     timestamp: new Date(Date.now() - 1000 * 60 * 4),
     actions: [
       {
@@ -53,13 +57,6 @@ const INITIAL_MESSAGES: ChatMessage[] = [
         description: 'Initialized capabilities matrix & core agent telemetry',
       },
     ],
-  },
-  {
-    id: 'msg-6',
-    role: 'assistant',
-    content:
-      'I operate across several domains to streamline your workflow, Sir. This includes full desktop control, managing your files and applications, and coordinating with your network of agents for complex research or communication needs. I also handle task automation and retain our context to ensure every interaction is uniquely tailored to your needs.',
-    timestamp: new Date(Date.now() - 1000 * 60 * 2),
   },
 ];
 
@@ -70,6 +67,17 @@ export default function App() {
   const [micEnabled, setMicEnabled] = useState(false);
   const [soundEnabled, setSoundEnabled] = useState(true);
   const [activeModal, setActiveModal] = useState<'memory' | 'skills' | 'character' | 'setting' | 'info' | null>(null);
+  const [isBrainConfigOpen, setIsBrainConfigOpen] = useState(false);
+  const [isScreenMonitorOpen, setIsScreenMonitorOpen] = useState(false);
+  const [brainConfig, setBrainConfig] = useState<BrainConfig>(() => {
+    try {
+      const saved = localStorage.getItem('stonic_ai_brain_config');
+      if (saved) return JSON.parse(saved);
+    } catch (e) {
+      console.warn('Could not read saved brain config:', e);
+    }
+    return DEFAULT_BRAIN_CONFIG;
+  });
 
   // Dynamic 3D Human Task Trigger (When user speaks or commands, 3D agent responds physically)
   const [externalTaskTrigger, setExternalTaskTrigger] = useState<{ agentId: string; task: string } | null>(null);
@@ -154,7 +162,7 @@ export default function App() {
     };
   }, [handleMouseMove, handleMouseUp]);
 
-  const speak = (text: string) => {
+  const speak = (text: string, agentId: 'alice' | 'bob' | 'carol' | 'dave' | 'stonic' = 'stonic') => {
     if (!soundEnabled || !('speechSynthesis' in window)) return;
     window.speechSynthesis.cancel();
     const cleanText = text.replace(/[*_#`>\[\]]/g, '').trim();
@@ -162,14 +170,40 @@ export default function App() {
 
     const utterance = new SpeechSynthesisUtterance(cleanText);
     const voices = window.speechSynthesis.getVoices();
-    const chosenVoice =
-      voices.find((v) => /Google UK English Female|Microsoft Zira|Samantha|Victoria/i.test(v.name)) ||
-      voices.find((v) => /female/i.test(v.name)) ||
-      voices[0];
 
-    if (chosenVoice) utterance.voice = chosenVoice;
-    utterance.pitch = 1.0;
-    utterance.rate = 1.0;
+    // Prefer native Urdu or Hindi voices for natural Roman Urdu / Saraiki pronunciation
+    const urduVoice = voices.find((v) => /ur-PK|ur_PK|ur-|Urdu|hi-IN|hi_IN|Hindi/i.test(v.lang) || /Urdu|Hindi/i.test(v.name));
+
+    if (agentId === 'alice') {
+      const voice = urduVoice || voices.find((v) => /female/i.test(v.name)) || voices[0];
+      if (voice) utterance.voice = voice;
+      utterance.pitch = 1.1;
+      utterance.rate = 1.0;
+    } else if (agentId === 'bob') {
+      const voice = urduVoice || voices.find((v) => /male/i.test(v.name)) || voices[0];
+      if (voice) utterance.voice = voice;
+      utterance.pitch = 0.9;
+      utterance.rate = 0.95;
+    } else if (agentId === 'carol') {
+      const voice = urduVoice || voices.find((v) => /female/i.test(v.name)) || voices[0];
+      if (voice) utterance.voice = voice;
+      utterance.pitch = 1.05;
+      utterance.rate = 1.0;
+    } else if (agentId === 'dave') {
+      const voice = urduVoice || voices.find((v) => /male/i.test(v.name)) || voices[0];
+      if (voice) utterance.voice = voice;
+      utterance.pitch = 0.95;
+      utterance.rate = 0.95;
+    } else {
+      const chosenVoice =
+        urduVoice ||
+        voices.find((v) => /Google UK English Female|Microsoft Zira|Samantha|Victoria|female/i.test(v.name)) ||
+        voices[0];
+      if (chosenVoice) utterance.voice = chosenVoice;
+      utterance.pitch = 1.0;
+      utterance.rate = 0.95;
+    }
+
     window.speechSynthesis.speak(utterance);
   };
 
@@ -187,16 +221,27 @@ export default function App() {
 
       try {
         const recognition = new SpeechRecognition();
-        recognition.lang = 'en-US';
+        // Support Urdu Pakistan (ur-PK) for seamless Urdu/Saraiki voice recognition
+        recognition.lang = 'ur-PK';
         recognition.interimResults = false;
 
         recognition.onresult = (event: any) => {
           const transcript = event.results[0][0].transcript;
           setMicEnabled(false);
+          const lower = transcript.toLowerCase();
+          if (lower.includes('screen') || lower.includes('dekho') || lower.includes('dykho') || lower.includes('monitor')) {
+            setIsScreenMonitorOpen(true);
+          }
+          if (lower.includes('brain') || lower.includes('api key') || lower.includes('provider') || lower.includes('setting')) {
+            setIsBrainConfigOpen(true);
+          }
           handleSendMessage(transcript);
         };
 
-        recognition.onerror = () => setMicEnabled(false);
+        recognition.onerror = () => {
+          // If ur-PK isn't installed in browser recognizer, fallback to auto
+          setMicEnabled(false);
+        };
         recognition.onend = () => setMicEnabled(false);
 
         recognitionRef.current = recognition;
@@ -231,18 +276,29 @@ export default function App() {
     if (!text.trim() || isLoading) return;
 
     const lower = text.toLowerCase();
+    let targetedAgent: 'alice' | 'bob' | 'carol' | 'dave' | null = null;
+    let agentName = '';
 
-    // Direct 3D physical agent behaviors in the office
-    if (lower.includes('meeting') || lower.includes('sab') || lower.includes('conference') || lower.includes('ikatha')) {
+    // Direct Voice & Text Addressing Detection
+    if (lower.includes('alice')) {
+      targetedAgent = 'alice';
+      agentName = 'Alice';
+    } else if (lower.includes('bob')) {
+      targetedAgent = 'bob';
+      agentName = 'Bob';
+    } else if (lower.includes('carol')) {
+      targetedAgent = 'carol';
+      agentName = 'Carol';
+    } else if (lower.includes('dave')) {
+      targetedAgent = 'dave';
+      agentName = 'Dave';
+    }
+
+    // Trigger physical agent and live workspace focus
+    if (targetedAgent) {
+      setExternalTaskTrigger({ agentId: targetedAgent, task: text });
+    } else if (lower.includes('meeting') || lower.includes('sab') || lower.includes('conference') || lower.includes('ikatha')) {
       setExternalTaskTrigger({ agentId: 'all', task: 'All-Hands Conference Meeting' });
-    } else if (lower.includes('bob') || lower.includes('coffee') || lower.includes('espresso')) {
-      setExternalTaskTrigger({ agentId: 'bob', task: text });
-    } else if (lower.includes('alice') || lower.includes('briefing') || lower.includes('summit')) {
-      setExternalTaskTrigger({ agentId: 'alice', task: text });
-    } else if (lower.includes('carol') || lower.includes('water') || lower.includes('paani')) {
-      setExternalTaskTrigger({ agentId: 'carol', task: text });
-    } else if (lower.includes('dave') || lower.includes('scan') || lower.includes('server') || lower.includes('cloud')) {
-      setExternalTaskTrigger({ agentId: 'dave', task: text });
     }
 
     const userMessage: ChatMessage = {
@@ -256,8 +312,51 @@ export default function App() {
     setIsLoading(true);
     setThinking(true);
 
+    // If targeted agent was addressed directly, route to Gemini Agent Task Dispatcher
+    if (targetedAgent) {
+      try {
+        const res = await fetch('/api/admin/agent-task', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            agentId: targetedAgent,
+            instruction: text,
+            context: { officeState: 'operational' },
+          }),
+        });
+
+        if (res.ok) {
+          const data = await res.json();
+          const reply = data.output || `Agent ${agentName} executing directive with optimal parameters, Sir.`;
+          const assistantMessage: ChatMessage = {
+            id: (Date.now() + 1).toString(),
+            role: 'assistant',
+            content: reply,
+            timestamp: new Date(),
+            agentId: targetedAgent,
+            agentName,
+          };
+
+          setMessages((prev) => [...prev, assistantMessage]);
+          speak(reply, targetedAgent);
+          setIsLoading(false);
+          return;
+        }
+      } catch (e) {
+        console.warn('Direct agent task route error:', e);
+      }
+    }
+
+    // General Stonic AI Core Route (Universal Multi-Provider Engine)
     try {
-      const res = await fetch('/api/admin/chat', {
+      if (lower.includes('screen') || lower.includes('dekho') || lower.includes('dykho') || lower.includes('monitor')) {
+        setIsScreenMonitorOpen(true);
+      }
+      if (lower.includes('brain') || lower.includes('api key') || lower.includes('provider') || lower.includes('setting')) {
+        setIsBrainConfigOpen(true);
+      }
+
+      const res = await fetch('/api/admin/universal-chat', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -266,12 +365,19 @@ export default function App() {
             role: m.role,
             content: m.content,
           })),
+          config: brainConfig,
         }),
       });
 
       if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
 
       const data = await res.json();
+      if (data.actions?.some((a: any) => a.type === 'screen_monitor_active')) {
+        setIsScreenMonitorOpen(true);
+      }
+      if (data.actions?.some((a: any) => a.type === 'open_info_panel')) {
+        setActiveModal('info');
+      }
       const assistantMessage: ChatMessage = {
         id: (Date.now() + 1).toString(),
         role: 'assistant',
@@ -281,7 +387,7 @@ export default function App() {
       };
 
       setMessages((prev) => [...prev, assistantMessage]);
-      speak(data.response);
+      speak(data.response, 'stonic');
     } catch (err) {
       console.warn('Chat request failed, generating intelligent client fallback:', err);
 
@@ -293,9 +399,13 @@ export default function App() {
       } else if (lower.includes('meeting') || lower.includes('sab')) {
         fallbackText = 'All-Hands Meeting engaged, Sir. Alice, Bob, Carol, and Dave are convening at the central conference table.';
       } else if (lower.includes('bob')) {
-        fallbackText = 'Directing Agent Bob to address cyber defense and network telemetry at once, Sir.';
+        fallbackText = 'Agent Bob reporting: Firewall audit complete. Subnet 192.168.1.0/24 secured with TLS 1.3 strict transport, Sir.';
       } else if (lower.includes('alice')) {
-        fallbackText = 'Agent Alice has engaged tactical intelligence briefing routines, Sir.';
+        fallbackText = 'Agent Alice reporting: Satellite orbital link locked on Sector 9. Summit telemetry dossier updated, Sir.';
+      } else if (lower.includes('carol')) {
+        fallbackText = 'Agent Carol reporting: Kafka telemetry streaming at 1.48M events per second with zero consumer lag, Sir.';
+      } else if (lower.includes('dave')) {
+        fallbackText = 'Agent Dave reporting: All 16 Kubernetes microservices are healthy and thermals are normal at 41°C, Sir.';
       }
 
       const assistantMessage: ChatMessage = {
@@ -303,9 +413,11 @@ export default function App() {
         role: 'assistant',
         content: fallbackText,
         timestamp: new Date(),
+        agentId: targetedAgent || undefined,
+        agentName: agentName || undefined,
       };
       setMessages((prev) => [...prev, assistantMessage]);
-      speak(fallbackText);
+      speak(fallbackText, targetedAgent || 'stonic');
     } finally {
       setIsLoading(false);
     }
@@ -428,6 +540,9 @@ export default function App() {
               toggleMic={toggleMic}
               onTerminate={handleTerminate}
               onOpenModal={(modal) => setActiveModal(modal)}
+              onOpenBrainConfig={() => setIsBrainConfigOpen(true)}
+              onOpenScreenMonitor={() => setIsScreenMonitorOpen(true)}
+              activeBrainProvider={brainConfig.provider}
               isExpanded
               onToggleExpand={() => setMaximizedPanel(null)}
             />
@@ -469,6 +584,9 @@ export default function App() {
               toggleMic={toggleMic}
               onTerminate={handleTerminate}
               onOpenModal={(modal) => setActiveModal(modal)}
+              onOpenBrainConfig={() => setIsBrainConfigOpen(true)}
+              onOpenScreenMonitor={() => setIsScreenMonitorOpen(true)}
+              activeBrainProvider={brainConfig.provider}
               onToggleExpand={() => setMaximizedPanel('neural')}
             />
           )}
@@ -528,6 +646,9 @@ export default function App() {
                 toggleMic={toggleMic}
                 onTerminate={handleTerminate}
                 onOpenModal={(modal) => setActiveModal(modal)}
+                onOpenBrainConfig={() => setIsBrainConfigOpen(true)}
+                onOpenScreenMonitor={() => setIsScreenMonitorOpen(true)}
+                activeBrainProvider={brainConfig.provider}
                 onToggleExpand={() => setMaximizedPanel('neural')}
               />
             </div>
@@ -585,6 +706,33 @@ export default function App() {
 
       {/* Cyber Modals for Memory, Skills, Character, Settings, and Info */}
       <Modals activeModal={activeModal} onClose={() => setActiveModal(null)} />
+
+      {/* AI Brain Multi-Provider & Custom API Key Hub */}
+      <BrainConfigModal
+        isOpen={isBrainConfigOpen}
+        onClose={() => setIsBrainConfigOpen(false)}
+        config={brainConfig}
+        onSaveConfig={(newConfig) => {
+          setBrainConfig(newConfig);
+          try {
+            localStorage.setItem('stonic_ai_brain_config', JSON.stringify(newConfig));
+          } catch (e) {
+            console.warn('Failed to save brain config:', e);
+          }
+          speak(`Neural Brain configured to ${newConfig.provider.replace('_', ' ')}. System synchronized, Sir.`);
+        }}
+      />
+
+      {/* Real Optical Screen Monitoring & Desktop Controller */}
+      <ScreenMonitorDeck
+        isOpen={isScreenMonitorOpen}
+        onClose={() => setIsScreenMonitorOpen(false)}
+        brainConfig={brainConfig}
+        onSendChatMessage={handleSendMessage}
+        externalVoiceCommand={
+          messages[messages.length - 1]?.role === 'user' ? messages[messages.length - 1]?.content : null
+        }
+      />
     </div>
   );
 }
