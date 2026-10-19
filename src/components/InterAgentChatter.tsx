@@ -17,6 +17,7 @@ import {
   Check,
 } from 'lucide-react';
 import { InterAgentMessage } from '../types';
+import { playAgentSpeech } from '../utils/audioEffects';
 
 import alicePortraitImg from '../assets/images/alice_portrait.jpg';
 import bobPortraitImg from '../assets/images/bob_portrait.jpg';
@@ -75,15 +76,8 @@ export const InterAgentChatter: React.FC<InterAgentChatterProps> = ({
   }, []);
 
   const speakChatter = (msg: InterAgentMessage) => {
-    if (!radioAudioEnabled || !('speechSynthesis' in window)) return;
-    try {
-      const utterance = new SpeechSynthesisUtterance(`${msg.senderName} to ${msg.recipientName}: ${msg.content}`);
-      utterance.rate = 1.05;
-      utterance.pitch = msg.senderId === 'alice' ? 1.15 : msg.senderId === 'bob' ? 0.85 : msg.senderId === 'carol' ? 1.05 : 0.95;
-      window.speechSynthesis.speak(utterance);
-    } catch {
-      // Audio speech synthesis suppressed
-    }
+    if (!radioAudioEnabled) return;
+    playAgentSpeech(msg.content, msg.senderId);
   };
 
   // Simulate or trigger new autonomous conversation turn

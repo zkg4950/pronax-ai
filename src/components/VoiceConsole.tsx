@@ -18,8 +18,9 @@ import {
   Monitor,
   Eye,
 } from 'lucide-react';
-import { ChatMessage } from '../types';
+import { ChatMessage, EmotionAnalysis } from '../types';
 import { InterAgentChatter } from './InterAgentChatter';
+import { stopAllAgentSpeech } from '../utils/audioEffects';
 
 import alicePortraitImg from '../assets/images/alice_portrait.jpg';
 import bobPortraitImg from '../assets/images/bob_portrait.jpg';
@@ -37,6 +38,8 @@ interface VoiceConsoleProps {
   isExpanded?: boolean;
   onToggleExpand?: () => void;
   onSelectAgent?: (agentId: string) => void;
+  userEmotion?: EmotionAnalysis;
+  onOpenCryptoHub?: (tab?: 'analysis' | 'marketing') => void;
 }
 
 const AGENT_PORTRAITS: Record<string, string> = {
@@ -63,6 +66,8 @@ export const VoiceConsole: React.FC<VoiceConsoleProps> = ({
   isExpanded = false,
   onToggleExpand,
   onSelectAgent,
+  userEmotion,
+  onOpenCryptoHub,
 }) => {
   const [activeTab, setActiveTab] = useState<'voice' | 'inter-agent' | 'notes'>('voice');
   const [inputText, setInputText] = useState('');
@@ -139,7 +144,10 @@ export const VoiceConsole: React.FC<VoiceConsoleProps> = ({
             <Plus className="w-3.5 h-3.5" />
           </button>
           <button
-            onClick={() => setSoundEnabled(!soundEnabled)}
+            onClick={() => {
+              if (soundEnabled) stopAllAgentSpeech();
+              setSoundEnabled(!soundEnabled);
+            }}
             className="hover:text-cyan-200 transition-colors p-1"
             title={soundEnabled ? 'Mute Stonic Voice' : 'Unmute Stonic Voice'}
           >
@@ -157,6 +165,29 @@ export const VoiceConsole: React.FC<VoiceConsoleProps> = ({
           )}
         </div>
       </div>
+
+      {/* User Emotion & Feeling Understanding HUD Banner */}
+      {userEmotion && (
+        <div className="flex items-center justify-between px-3 py-1 bg-[#021321] border-b border-cyan-500/20 text-[10px] font-mono-tech shrink-0">
+          <div className="flex items-center gap-1.5 text-cyan-200">
+            <span className="text-xs">{userEmotion.emoji}</span>
+            <span className="text-slate-400">FEELING:</span>
+            <span className="font-bold text-white uppercase">{userEmotion.label}</span>
+          </div>
+          <div className="flex items-center gap-1.5">
+            {onOpenCryptoHub && (
+              <button
+                type="button"
+                onClick={() => onOpenCryptoHub('analysis')}
+                className="px-1.5 py-0.5 rounded bg-cyan-500/20 border border-cyan-400/40 text-cyan-200 hover:bg-cyan-500/40 text-[9px] font-bold cursor-pointer"
+              >
+                OPEN CRYPTO
+              </button>
+            )}
+            <span className="text-[9px] text-emerald-400 font-bold hidden sm:inline">● EMPATHY ACTIVE</span>
+          </div>
+        </div>
+      )}
 
       {/* Tab 1: VOICE CHAT FEED */}
       {activeTab === 'voice' && (
@@ -327,6 +358,31 @@ export const VoiceConsole: React.FC<VoiceConsoleProps> = ({
         >
           🖥️ Screen Dekho Jani
         </button>
+        {onOpenCryptoHub && (
+          <>
+            <button
+              type="button"
+              onClick={() => onOpenCryptoHub('analysis')}
+              className="px-2 py-0.5 rounded-full bg-emerald-500/15 border border-emerald-500/40 text-emerald-300 text-[9px] font-mono-tech hover:bg-emerald-500/30 whitespace-nowrap cursor-pointer transition-colors"
+            >
+              📈 Crypto Market Analysis
+            </button>
+            <button
+              type="button"
+              onClick={() => onOpenCryptoHub('marketing')}
+              className="px-2 py-0.5 rounded-full bg-amber-500/15 border border-amber-500/40 text-amber-300 text-[9px] font-mono-tech hover:bg-amber-500/30 whitespace-nowrap cursor-pointer transition-colors"
+            >
+              🚀 Crypto Marketing Suite
+            </button>
+            <button
+              type="button"
+              onClick={() => onSendMessage('Jani crypto drop dekh k boht tension ho rahi hai, loss ho gaya hai, hosla do te safe plan batao')}
+              className="px-2 py-0.5 rounded-full bg-rose-500/15 border border-rose-500/40 text-rose-300 text-[9px] font-mono-tech hover:bg-rose-500/30 whitespace-nowrap cursor-pointer transition-colors"
+            >
+              😟 Tension / Loss Empathy Help
+            </button>
+          </>
+        )}
         <button
           type="button"
           onClick={() => onSendMessage('Jani apna full intro karao aur daso ki ki taqat hai tuhan-day brain kol?')}

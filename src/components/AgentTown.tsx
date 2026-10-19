@@ -8,6 +8,9 @@ interface AgentTownProps {
   onToggleExpand?: () => void;
   externalTaskTrigger?: { agentId: string; task: string } | null;
   onBackToDashboard?: () => void;
+  onOpenCryptoMarket?: () => void;
+  onOpenCryptoMarketing?: () => void;
+  userEmotion?: any;
 }
 
 export const AgentTown: React.FC<AgentTownProps> = ({
@@ -16,6 +19,9 @@ export const AgentTown: React.FC<AgentTownProps> = ({
   onToggleExpand,
   externalTaskTrigger,
   onBackToDashboard,
+  onOpenCryptoMarket,
+  onOpenCryptoMarketing,
+  userEmotion,
 }) => {
   return (
     <div
@@ -39,6 +45,9 @@ export const AgentTown: React.FC<AgentTownProps> = ({
         onToggleExpand={onToggleExpand}
         externalTaskTrigger={externalTaskTrigger}
         onBackToDashboard={onBackToDashboard}
+        onOpenCryptoMarket={onOpenCryptoMarket}
+        onOpenCryptoMarketing={onOpenCryptoMarketing}
+        userEmotion={userEmotion}
       />
     </div>
   );

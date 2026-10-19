@@ -22,6 +22,7 @@ import {
   Columns,
 } from 'lucide-react';
 import { AgentInfo } from '../types';
+import { playAgentSpeech } from '../utils/audioEffects';
 
 import alicePortraitImg from '../assets/images/alice_portrait.jpg';
 import bobPortraitImg from '../assets/images/bob_portrait.jpg';
@@ -186,18 +187,9 @@ export const AgentWorkspaceDeck: React.FC<AgentWorkspaceDeckProps> = ({
     return () => cancelAnimationFrame(animationId);
   }, []);
 
-  const speakText = (text: string) => {
-    try {
-      if ('speechSynthesis' in window) {
-        window.speechSynthesis.cancel();
-        const utterance = new SpeechSynthesisUtterance(text);
-        utterance.rate = 1.05;
-        utterance.pitch = 1.0;
-        window.speechSynthesis.speak(utterance);
-      }
-    } catch {
-      // Ignore if speech is restricted
-    }
+  const speakText = (text: string, agentId?: string) => {
+    const target = (agentId || selectedAgentId || 'stonic') as 'alice' | 'bob' | 'carol' | 'dave' | 'stonic';
+    playAgentSpeech(text, target);
   };
 
   const handleSelectAgent = (agentId: string) => {

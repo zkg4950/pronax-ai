@@ -41,6 +41,9 @@ interface AgentOffice3DProps {
   onToggleExpand?: () => void;
   externalTaskTrigger?: { agentId: string; task: string } | null;
   onBackToDashboard?: () => void;
+  onOpenCryptoMarket?: () => void;
+  onOpenCryptoMarketing?: () => void;
+  userEmotion?: any;
 }
 
 type CameraPreset = 'OVERVIEW' | 'ALICE' | 'BOB' | 'CAROL' | 'DAVE' | 'MEETING';
@@ -312,6 +315,9 @@ export const AgentOffice3D: React.FC<AgentOffice3DProps> = ({
   onToggleExpand,
   externalTaskTrigger,
   onBackToDashboard,
+  onOpenCryptoMarket,
+  onOpenCryptoMarketing,
+  userEmotion,
 }) => {
   const mountRef = useRef<HTMLDivElement>(null);
 
@@ -1309,6 +1315,27 @@ export const AgentOffice3D: React.FC<AgentOffice3DProps> = ({
             <Sparkles className="w-3.5 h-3.5 text-emerald-300" />
             <span>DISCUSS NOW</span>
           </button>
+
+          {/* Crypto Market Hub Buttons */}
+          {onOpenCryptoMarket && (
+            <button
+              onClick={onOpenCryptoMarket}
+              className="flex items-center gap-1 px-2.5 py-1 rounded bg-emerald-950/70 border border-emerald-400/60 text-emerald-200 hover:bg-emerald-900/80 cursor-pointer font-bold shadow-[0_0_10px_rgba(16,185,129,0.25)]"
+            >
+              <Activity className="w-3.5 h-3.5 text-emerald-400" />
+              <span>[📈 CRYPTO MARKET]</span>
+            </button>
+          )}
+
+          {onOpenCryptoMarketing && (
+            <button
+              onClick={onOpenCryptoMarketing}
+              className="flex items-center gap-1 px-2.5 py-1 rounded bg-amber-950/70 border border-amber-400/60 text-amber-200 hover:bg-amber-900/80 cursor-pointer font-bold shadow-[0_0_10px_rgba(245,158,11,0.25)]"
+            >
+              <Zap className="w-3.5 h-3.5 text-amber-400" />
+              <span>[🚀 CRYPTO MARKETING]</span>
+            </button>
+          )}
         </div>
       </div>
 

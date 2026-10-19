@@ -20,6 +20,7 @@ import {
   CheckCircle2,
 } from 'lucide-react';
 import { AgentInfo } from '../types';
+import { playAgentSpeech } from '../utils/audioEffects';
 
 import officeOverviewImg from '../assets/images/office_overview.jpg';
 import alicePortraitImg from '../assets/images/alice_portrait.jpg';
@@ -144,25 +145,9 @@ export const AgentOfficeStudio: React.FC<AgentOfficeStudioProps> = ({
     },
   });
 
-  const speakText = (text: string) => {
-    try {
-      if ('speechSynthesis' in window) {
-        window.speechSynthesis.cancel();
-        const cleanText = text.replace(/[*_#`>\[\]]/g, '').trim();
-        if (!cleanText) return;
-        const utterance = new SpeechSynthesisUtterance(cleanText);
-        const voices = window.speechSynthesis.getVoices();
-        const urduVoice = voices.find((v) => /ur-PK|ur_PK|ur-|Urdu|hi-IN|hi_IN|Hindi/i.test(v.lang) || /Urdu|Hindi/i.test(v.name));
-        if (urduVoice) {
-          utterance.voice = urduVoice;
-        }
-        utterance.rate = 0.95;
-        utterance.pitch = 1.0;
-        window.speechSynthesis.speak(utterance);
-      }
-    } catch {
-      // Ignore if speech is restricted
-    }
+  const speakText = (text: string, agentId?: string) => {
+    const target = (agentId || selectedAgentId || 'stonic') as 'alice' | 'bob' | 'carol' | 'dave' | 'stonic';
+    playAgentSpeech(text, target);
   };
 
   const handleSelectAgent = (id: string) => {
@@ -197,7 +182,7 @@ export const AgentOfficeStudio: React.FC<AgentOfficeStudioProps> = ({
     setIsExecutingTask(true);
     const agent = agents[selectedAgentId];
     speakText(`Hukum samajh gaya jani! ${agent.name} abhi kam execute kar riha hai.`);
-    setActiveNotification(`${agent.name}: "${instruction.slice(0, 36)}..." execute kar riha hai`);
+    setActiveNotification(`${agent.name} nawa directive execute kar riha hai...`);
 
     try {
       const res = await fetch('/api/admin/agent-task', {
@@ -217,12 +202,11 @@ export const AgentOfficeStudio: React.FC<AgentOfficeStudioProps> = ({
       if (data && data.output) {
         setAgents((prev) => {
           const target = { ...prev[selectedAgentId] };
-          target.taskDescription = instruction;
           target.taskTag = 'Mukammal Ho Gaya';
           target.progress = 100;
           target.terminalLogs = [
             ...target.terminalLogs,
-            `[${new Date().toLocaleTimeString()}] EXECUTED: ${instruction}`,
+            `[${new Date().toLocaleTimeString()}] COMPLETED: Autonomous directive processed successfully`,
             ...data.output.split('\n').filter((l: string) => l.trim().length > 0).slice(0, 5),
           ];
           return { ...prev, [selectedAgentId]: target };

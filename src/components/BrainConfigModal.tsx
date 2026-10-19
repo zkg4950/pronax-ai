@@ -15,8 +15,11 @@ import {
   Globe,
   Sliders,
   Radio,
+  Play,
+  Square,
 } from 'lucide-react';
 import { BrainConfig, AIProvider } from '../types';
+import { playAgentSpeech, stopAllAgentSpeech } from '../utils/audioEffects';
 
 export const DEFAULT_BRAIN_CONFIG: BrainConfig = {
   provider: 'stonic_gemini',
@@ -27,6 +30,8 @@ export const DEFAULT_BRAIN_CONFIG: BrainConfig = {
   voiceSpeed: 1.05,
   voicePitch: 1.0,
   voiceLanguage: 'auto',
+  voiceEngine: 'gemini_neural',
+  voiceClarityBoost: true,
   screenMonitorInterval: 5,
   temperature: 0.7,
 };
@@ -127,6 +132,7 @@ export const BrainConfigModal: React.FC<BrainConfigModalProps> = ({
     message: string;
     models?: string[];
   } | null>(null);
+  const [testingAgentId, setTestingAgentId] = useState<string | null>(null);
 
   useEffect(() => {
     setLocalConfig(config);
@@ -418,9 +424,14 @@ export const BrainConfigModal: React.FC<BrainConfigModalProps> = ({
 
           {/* Voice & Intelligence Personality Tuning */}
           <div className="p-4 rounded-lg bg-[#041422] border border-cyan-500/30 space-y-3">
-            <div className="text-xs font-bold text-cyan-200 border-b border-cyan-500/20 pb-2 flex items-center gap-1.5">
-              <Volume2 className="w-3.5 h-3.5 text-cyan-400" />
-              <span>Voice Synthesis & Language Protocols</span>
+            <div className="text-xs font-bold text-cyan-200 border-b border-cyan-500/20 pb-2 flex items-center justify-between">
+              <div className="flex items-center gap-1.5">
+                <Volume2 className="w-3.5 h-3.5 text-cyan-400" />
+                <span>Voice Synthesis & Language Clarity Engine</span>
+              </div>
+              <span className="text-[9px] px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 font-bold">
+                PRO URDU & SARAIKI AUDIO
+              </span>
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
@@ -438,13 +449,192 @@ export const BrainConfigModal: React.FC<BrainConfigModalProps> = ({
                 />
               </div>
 
-              {/* Language Mode */}
+              {/* Speech Synthesis Engine */}
               <div className="p-2.5 rounded bg-[#020b13] border border-cyan-500/20 flex items-center justify-between">
                 <div>
-                  <span className="text-[10px] text-cyan-200 font-bold block">Language Protocol</span>
-                  <span className="text-[8.5px] text-cyan-500">Urdu / Roman Urdu / English</span>
+                  <span className="text-[10px] text-cyan-200 font-bold block">Audio Clarity Engine</span>
+                  <span className="text-[8.5px] text-cyan-500">
+                    {localConfig.voiceEngine === 'browser_native' ? 'Native Script-Aware' : 'Gemini Studio HD (24kHz)'}
+                  </span>
                 </div>
-                <span className="text-[10px] text-emerald-400 font-bold">BILINGUAL</span>
+                <select
+                  value={localConfig.voiceEngine || 'gemini_neural'}
+                  onChange={(e) => setLocalConfig({ ...localConfig, voiceEngine: e.target.value as any })}
+                  className="bg-[#030e17] border border-cyan-500/40 text-cyan-200 text-[10px] rounded px-2 py-1 focus:outline-none"
+                >
+                  <option value="gemini_neural">Gemini Studio Neural (Ultra Clear)</option>
+                  <option value="browser_native">Native Browser Engine</option>
+                </select>
+              </div>
+            </div>
+
+            {/* Live Agent Voice & Pronunciation Clarity Tester */}
+            <div className="pt-2">
+              <div className="flex items-center justify-between mb-2">
+                <span className="text-[10px] text-cyan-300 font-bold uppercase tracking-wider flex items-center gap-1">
+                  <Play className="w-3 h-3 text-cyan-400" />
+                  <span>Test Each Agent Voice Live (Saraiki / Roman Urdu):</span>
+                </span>
+                {testingAgentId && (
+                  <button
+                    type="button"
+                    onClick={() => {
+                      stopAllAgentSpeech();
+                      setTestingAgentId(null);
+                    }}
+                    className="text-[9px] px-2 py-0.5 rounded bg-red-500/20 text-red-300 border border-red-500/40 flex items-center gap-1 hover:bg-red-500/30 cursor-pointer"
+                  >
+                    <Square className="w-2.5 h-2.5 fill-current" />
+                    <span>Stop Speech</span>
+                  </button>
+                )}
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2">
+                {/* Alice (Female Analyst) */}
+                <button
+                  type="button"
+                  onClick={() => {
+                    const phrase = 'Sain! Sector-9 satellite orbital link lock thia hey, briefing dossier bilkul tayar hey.';
+                    setTestingAgentId('alice');
+                    playAgentSpeech(phrase, 'alice', {
+                      customApiKey: localConfig.apiKey,
+                      voiceEngine: localConfig.voiceEngine,
+                      onEnd: () => setTestingAgentId(null),
+                    });
+                  }}
+                  className={`p-2 rounded border text-left transition-all cursor-pointer ${
+                    testingAgentId === 'alice'
+                      ? 'bg-purple-950/60 border-purple-400 shadow-[0_0_12px_rgba(168,85,247,0.3)]'
+                      : 'bg-[#020b13] border-purple-500/30 hover:border-purple-400/60'
+                  }`}
+                >
+                  <div className="flex items-center justify-between">
+                    <span className="text-[10px] font-bold text-purple-300">👩 Alice (Female)</span>
+                    <span className="text-[8px] px-1 py-0.2 rounded bg-purple-500/20 text-purple-200">
+                      {testingAgentId === 'alice' ? 'Speaking...' : 'Analyst Voice'}
+                    </span>
+                  </div>
+                  <p className="text-[8px] text-slate-400 mt-1 italic line-clamp-1">
+                    "Sain! Satellite link lock thia hey..."
+                  </p>
+                </button>
+
+                {/* Carol (Female Data Specialist) */}
+                <button
+                  type="button"
+                  onClick={() => {
+                    const phrase = 'Ada Bob, Kafka consumer pipeline 1.4M events per second te mast chaldi payi hey!';
+                    setTestingAgentId('carol');
+                    playAgentSpeech(phrase, 'carol', {
+                      customApiKey: localConfig.apiKey,
+                      voiceEngine: localConfig.voiceEngine,
+                      onEnd: () => setTestingAgentId(null),
+                    });
+                  }}
+                  className={`p-2 rounded border text-left transition-all cursor-pointer ${
+                    testingAgentId === 'carol'
+                      ? 'bg-emerald-950/60 border-emerald-400 shadow-[0_0_12px_rgba(52,211,153,0.3)]'
+                      : 'bg-[#020b13] border-emerald-500/30 hover:border-emerald-400/60'
+                  }`}
+                >
+                  <div className="flex items-center justify-between">
+                    <span className="text-[10px] font-bold text-emerald-300">👩 Carol (Female)</span>
+                    <span className="text-[8px] px-1 py-0.2 rounded bg-emerald-500/20 text-emerald-200">
+                      {testingAgentId === 'carol' ? 'Speaking...' : 'Data Specialist'}
+                    </span>
+                  </div>
+                  <p className="text-[8px] text-slate-400 mt-1 italic line-clamp-1">
+                    "Ada Bob, Kafka pipeline mast chaldi..."
+                  </p>
+                </button>
+
+                {/* Bob (MALE Cyber Security Lead) */}
+                <button
+                  type="button"
+                  onClick={() => {
+                    const phrase = 'Haan Alice baji! Ingress firewall full tight hey, hacker da baap ve nai aa sakda!';
+                    setTestingAgentId('bob');
+                    playAgentSpeech(phrase, 'bob', {
+                      customApiKey: localConfig.apiKey,
+                      voiceEngine: localConfig.voiceEngine,
+                      onEnd: () => setTestingAgentId(null),
+                    });
+                  }}
+                  className={`p-2 rounded border text-left transition-all cursor-pointer ${
+                    testingAgentId === 'bob'
+                      ? 'bg-blue-950/60 border-blue-400 shadow-[0_0_12px_rgba(59,130,246,0.3)]'
+                      : 'bg-[#020b13] border-blue-500/30 hover:border-blue-400/60'
+                  }`}
+                >
+                  <div className="flex items-center justify-between">
+                    <span className="text-[10px] font-bold text-blue-300">👨 Bob (MALE)</span>
+                    <span className="text-[8px] px-1 py-0.2 rounded bg-blue-500/20 text-blue-200">
+                      {testingAgentId === 'bob' ? 'Speaking...' : 'Cyber Defense'}
+                    </span>
+                  </div>
+                  <p className="text-[8px] text-slate-400 mt-1 italic line-clamp-1">
+                    "Haan Alice baji! Firewall full tight hey..."
+                  </p>
+                </button>
+
+                {/* Dave (MALE Cloud DevOps Architect) */}
+                <button
+                  type="button"
+                  onClick={() => {
+                    const phrase = 'Jani Kubernetes de saray 16 pods green han, cluster full chass karwa reha hey!';
+                    setTestingAgentId('dave');
+                    playAgentSpeech(phrase, 'dave', {
+                      customApiKey: localConfig.apiKey,
+                      voiceEngine: localConfig.voiceEngine,
+                      onEnd: () => setTestingAgentId(null),
+                    });
+                  }}
+                  className={`p-2 rounded border text-left transition-all cursor-pointer ${
+                    testingAgentId === 'dave'
+                      ? 'bg-amber-950/60 border-amber-400 shadow-[0_0_12px_rgba(251,191,36,0.3)]'
+                      : 'bg-[#020b13] border-amber-500/30 hover:border-amber-400/60'
+                  }`}
+                >
+                  <div className="flex items-center justify-between">
+                    <span className="text-[10px] font-bold text-amber-300">👨 Dave (MALE)</span>
+                    <span className="text-[8px] px-1 py-0.2 rounded bg-amber-500/20 text-amber-200">
+                      {testingAgentId === 'dave' ? 'Speaking...' : 'DevOps Architect'}
+                    </span>
+                  </div>
+                  <p className="text-[8px] text-slate-400 mt-1 italic line-clamp-1">
+                    "Jani 16 pods green han, full chass..."
+                  </p>
+                </button>
+
+                {/* Stonic AI (Central Core Intelligence) */}
+                <button
+                  type="button"
+                  onClick={() => {
+                    const phrase = 'Kivein o jani? Usman sahib da Stonic AI bilkul hazir hey, dasso ki hukum hey!';
+                    setTestingAgentId('stonic');
+                    playAgentSpeech(phrase, 'stonic', {
+                      customApiKey: localConfig.apiKey,
+                      voiceEngine: localConfig.voiceEngine,
+                      onEnd: () => setTestingAgentId(null),
+                    });
+                  }}
+                  className={`p-2 rounded border text-left transition-all cursor-pointer col-span-1 sm:col-span-2 md:col-span-2 ${
+                    testingAgentId === 'stonic'
+                      ? 'bg-cyan-950/60 border-cyan-400 shadow-[0_0_12px_rgba(6,182,212,0.3)]'
+                      : 'bg-[#020b13] border-cyan-500/30 hover:border-cyan-400/60'
+                  }`}
+                >
+                  <div className="flex items-center justify-between">
+                    <span className="text-[10px] font-bold text-cyan-300">🤖 Stonic AI Central Core</span>
+                    <span className="text-[8px] px-1 py-0.2 rounded bg-cyan-500/20 text-cyan-200">
+                      {testingAgentId === 'stonic' ? 'Speaking...' : 'Master Intelligence'}
+                    </span>
+                  </div>
+                  <p className="text-[8px] text-slate-400 mt-1 italic line-clamp-1">
+                    "Kivein o jani? Usman sahib da Stonic AI bilkul hazir hey..."
+                  </p>
+                </button>
               </div>
             </div>
           </div>

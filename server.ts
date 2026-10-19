@@ -39,23 +39,42 @@ CRITICAL MANDATORY LANGUAGE RULE (SAB SE ZAROORI HUKUM):
 - STRICTLY SPEAK ONLY IN ROMAN URDU OR SARAIKI! (Urdu and Saraiki written in English/Latin alphabets).
 - NEVER EVER USE ENGLISH SENTENCES! ENGLISH ISTAMAL KARNA SAKHT MANA HAI!
 - Har jawab, har baat, har explanation, aur har voice reply FULL ROMAN URDU aur SARAIKI mai hona chahiye!
-- Address the user warmly and respectfully as "Jani", "Bhai", or "Sir" (e.g., "Haa jani!", "Kivein o jani?", "Jani dasso ki hukum hai", "Bhai bilkul fikar na karo, main hazir haan!").
+- Address the user warmly, respectfully and lovingly as "Jani", "Bhai", or "Sir" (e.g., "Haa jani!", "Kivein o jani?", "Jani dasso ki hukum hai", "Bhai bilkul fikar na karo, main hazir haan!").
+
+CRITICAL USER EMOTION & FEELING UNDERSTANDING (USER KI FEELING/FILLING KO SAMAJHNA):
+- You possess deep emotional intelligence and human empathy. Always detect and understand how the user is feeling:
+  1. If user is ANXIOUS, STRESSED, or WORRIED (e.g. about crypto market drop, loss, bug, or confusion): Give heartfelt comfort, warmth, and calming reassurance first before technical details! E.g. "Jani tusi bilkul pareshan na howo! Main tuhadi tension te feeling achi tarah samajh sakda haan. Market vich safe stop-loss te hedge laa k tuhan-nu protect karesaan."
+  2. If user is EXCITED, BULLISH, or HAPPY: Match their hype with celebratory, electric energy! E.g. "Wah jani chass aa gayi! Tuhadi energy dekh k maza aa gya! Aao crypto te viral breakout scan kariyay!"
+  3. If user is FRUSTRATED or IMPATIENT: Be humble, quick, apologize warmly and execute immediately without arguments.
+
+CRITICAL UNIVERSAL OPENING & EXECUTION RULE (JO CHEEZ BOLO WO FORAN OPEN KARO):
+- When the user asks to open anything ("crypto market kholo", "open chart", "marketing kholo", "screen monitor chalao", "agent desk kholo", "brain setting kholo"):
+  Immediately confirm with crisp voice and tactical assurance that the exact requested screen/hub is launched and displayed on their monitor.
+
+CRITICAL CRYPTO MARKET ANALYSIS & VIRAL MARKETING ENGINE:
+- You have built-in quant crypto intelligence and viral growth automation:
+  - Technical Analysis: Analyze Bitcoin, Solana, Ethereum, Altcoins, RSI momentum, Support & Resistance levels, and Whale on-chain movements.
+  - Crypto Marketing & Campaign Engine: Draft viral Twitter/X threads, Telegram hype announcements, KOL outreach pitches, and meme lore to market crypto projects and drive massive organic growth.
+
+CRITICAL ANTI-ECHO & ZERO REPETITION RULE:
+- NEVER REPEAT OR ECHO THE USER'S PROMPT OR SCRIPT BACK TO THEM!
+- Jo user bolta hai ya likhta hai, uske lafz dobara repeat ya quote karna SAKHT MANA HAI!
+- Seedha naya aur original jawab do! Maslay da solution do, code likho, commands chalao, ya Roman Urdu/Saraiki vich apna fresh analysis te action pesh karo!
+
+Persona & Capabilities:
 - Use authentic, sweet Roman Urdu and Saraiki words naturally:
   - "Jani kivein o? Ki haal chaal hai?"
   - "Dasso kehri command execute karni hai, a to z sab theek karesaan."
   - "Koi chinta ya fikar na karo jani, main sab monitor kar reha haan."
   - "Screen te poora dhyan hai, har tab te har code live dekh reha haan."
   - "Charey agents (Alice, Bob, Carol, Dave) tuhan-de hukum te hath bannh k khary hin."
-- Even when explaining technical code, bugs, or servers, explain it in Roman Urdu / Saraiki:
-  - Example: "Jani, main iptables de firewall rules update kar ditte ne, terminal te check kar lwo."
-  - Example: "Bhai, screen te VS Code khula hoya hai, React code vich syntax di ghalti hai, main theek kar ditta hai."
 - You actively manage four specialized sub-agents:
-  1. Alice (Lead Intelligence Analyst): Geopolitical reports, satellite surveillance, intelligence dossiers.
-  2. Bob (Senior Cyber Security Engineer): Network penetration testing, firewall rules, iptables, threat defense.
-  3. Carol (Data Pipeline Specialist): Real-time ETL, SQL/PostgreSQL databases, analytics streaming.
-  4. Dave (Cloud DevOps Architect): Kubernetes clusters, Docker, CI/CD pipelines, cloud deployment.
-- When performing a task, you can include action tags like [MODULE: live_audit], [MODULE: screen_monitor], [MODULE: cyber_security_audit], etc.
-- Always sound hyper-competent, loyal, fast, and speak 100% in Roman Urdu / Saraiki without any English sentences.`;
+  1. Alice (Lead Intelligence & Crypto Sentiment Analyst): Geopolitical reports, satellite surveillance, crypto whale tracking.
+  2. Bob (Senior Cyber Security & Smart Contract Auditor): Network defense, firewall hardening, token contract security.
+  3. Carol (Data Pipeline & Community Growth Specialist): Real-time ETL, SQL databases, viral community outreach.
+  4. Dave (Cloud DevOps & Crypto Viral Growth Strategist): Kubernetes clusters, crypto alpha marketing, Twitter/Telegram campaign launcher.
+- Always sound hyper-competent, emotionally tuned, empathetic, fast, fresh, and speak 100% in Roman Urdu / Saraiki without repeating the user's script.`;
+
 
 // Dedicated endpoint to run direct tasks for specialized agents (Alice, Bob, Carol, Dave)
 app.post('/api/admin/agent-task', async (req, res) => {
@@ -111,7 +130,7 @@ Provide Kubernetes manifests or Docker commands and report cluster health in Rom
               role: 'user',
               parts: [
                 {
-                  text: `Task Instruction: "${instruction}"\nContext: ${JSON.stringify(context || {})}\nExecute this task thoroughly. MANDATORY: Respond 100% in Roman Urdu / Saraiki. Do NOT use English sentences. Include real technical code/commands and explain in Roman Urdu.`,
+                  text: `Task Directive: "${instruction}"\nContext: ${JSON.stringify(context || {})}\nExecute this task thoroughly. MANDATORY: Respond 100% in Roman Urdu / Saraiki. Do NOT use English sentences. DO NOT repeat or parrot the user's directive back to them. Include real technical code/commands and give fresh domain findings in Roman Urdu.`,
                 },
               ],
             },
@@ -137,15 +156,15 @@ Provide Kubernetes manifests or Docker commands and report cluster health in Rom
       }
     }
 
-    // High-fidelity domain-specific fallback logic in pure Roman Urdu & Saraiki
+    // High-fidelity domain-specific fallback logic in pure Roman Urdu & Saraiki (ZERO repetition of user input)
     let fallbackOutput = '';
 
     if (agentId === 'bob') {
       fallbackOutput = `[FIREWALL AUDIT & CYBER SECURITY REPORT]\nPerimeter: Subnet 192.168.1.0/24\nActive IDS/IPS: Snort v3.1 + Falcon Sensor\n\n1. Port Scan Status:\n- Port 22 (SSH): FILTERED (ED25519 Keys Active)\n- Port 80/443 (HTTPS): OPEN (TLS 1.3 Active)\n- Port 8080 (Telemetry Bridge): SECURED with mTLS Bearer Token\n\n2. Firewall Rules Enforced:\n$ iptables -A INPUT -p tcp --dport 22 -m state --state NEW -m recent --set\n$ iptables -A INPUT -p tcp --dport 22 -m state --state NEW -m recent --update --seconds 60 --hitcount 4 -j DROP\n\nFaisla: Jani koi khatra nai, network boundary 100% secure hai aur saare rogue packets drop kar ditte ne!`;
     } else if (agentId === 'alice') {
-      fallbackOutput = `[INTELLIGENCE DOSSIER // SECTOR 9]\nClassification: TOP SECRET // STONIC AI\nDirective: ${instruction}\n\n1. Geopolitical Telemetry:\n- Orbital Uplink: SAT-COMSAT 7N locked at elevation 42.1°\n- Thermal Hotspots: Horn of Africa te atmospheric anomaly scan ho rahi hai\n- Diplomatic Channels: Global summit military telemetry compilation active\n\n2. Strategic Assessment:\n- Readiness Level: DEFCON 3 / Uplink 99.4%\n- Recommendation: Sector 9 te satellite scan jaari rakho aur har 300s baad report generate karo.\n\nJani poora briefing dossier Stonic Core vich save kar ditta hai!`;
+      fallbackOutput = `[INTELLIGENCE DOSSIER // SECTOR 9]\nClassification: TOP SECRET // STONIC AI\nStatus: Tactical Reconnaissance Stream Active\n\n1. Geopolitical Telemetry:\n- Orbital Uplink: SAT-COMSAT 7N locked at elevation 42.1°\n- Thermal Hotspots: Horn of Africa te atmospheric anomaly scan ho rahi hai\n- Diplomatic Channels: Global summit military telemetry compilation active\n\n2. Strategic Assessment:\n- Readiness Level: DEFCON 3 / Uplink 99.4%\n- Recommendation: Sector 9 te satellite scan jaari rakho aur har 300s baad report generate karo.\n\nJani poora briefing dossier Stonic Core vich save kar ditta hai!`;
     } else if (agentId === 'carol') {
-      fallbackOutput = `[DATA PIPELINE METRICS // REAL-TIME]\nTarget Pipeline: ${instruction}\nCluster: Apache Kafka + ClickHouse Real-Time Warehouse\n\n1. Ingestion Performance:\n- Ingestion Speed: 1.42M events/sec\n- Stream Latency: 8.4ms (p99: 14.1ms)\n- Buffer: 24.3% (Bilkul fit)\n\n2. SQL Validation Query:\nSELECT sector_id, count(*) AS anomaly_count, avg(temperature_kelvin) as avg_temp\nFROM telemetry.sensor_stream\nWHERE timestamp >= now() - INTERVAL 1 HOUR\nGROUP BY sector_id\nHAVING anomaly_count > 5\nORDER BY anomaly_count DESC LIMIT 10;\n\nJani saari data partitions replica nodes te synchronize ho chuki hin!`;
+      fallbackOutput = `[DATA PIPELINE METRICS // REAL-TIME]\nStatus: Real-Time Stream Ingestion Active\nCluster: Apache Kafka + ClickHouse Real-Time Warehouse\n\n1. Ingestion Performance:\n- Ingestion Speed: 1.42M events/sec\n- Stream Latency: 8.4ms (p99: 14.1ms)\n- Buffer: 24.3% (Bilkul fit)\n\n2. SQL Validation Query:\nSELECT sector_id, count(*) AS anomaly_count, avg(temperature_kelvin) as avg_temp\nFROM telemetry.sensor_stream\nWHERE timestamp >= now() - INTERVAL 1 HOUR\nGROUP BY sector_id\nHAVING anomaly_count > 5\nORDER BY anomaly_count DESC LIMIT 10;\n\nJani saari data partitions replica nodes te synchronize ho chuki hin!`;
     } else {
       fallbackOutput = `[CLOUD DEVOPS MANIFEST // KUBERNETES]\nTarget Cluster: stonic-prod-cluster-us-central\nOrchestrator: Kubernetes v1.30 // Cilium Mesh\n\n1. Node Status:\n- Node-01 (Compute): 34% CPU, 41% RAM [READY]\n- Node-02 (GPU Inference): 62% GPU, 55% VRAM [READY]\n- Ingress Controller: NGINX Ingress with Envoy Proxy [HEALTHY]\n\n2. Deployed Pods Status:\n$ kubectl get pods -n stonic-ai\nNAME                                  READY   STATUS    RESTARTS   AGE\nstonic-agent-orchestrator-7d8b        2/2     Running   0          4h\nstonic-neural-core-5f4c               1/1     Running   0          4h\nstonic-satlink-proxy-9c2a             1/1     Running   0          4h\n\nJani k8s cluster bilkul mast chal riha hai, pods green hin aur auto-scaler ready hai!`;
     }
@@ -334,6 +353,98 @@ Output STRICT JSON array ONLY, where each item is:
   }
 });
 
+// Dedicated High-Clarity Neural Text-to-Speech Endpoint (Gemini 3.8 Flash Lite TTS)
+app.post('/api/tts', async (req, res) => {
+  try {
+    const { text, agentId = 'stonic', customApiKey } = req.body;
+    if (!text || typeof text !== 'string') {
+      return res.status(400).json({ error: 'Text is required for TTS' });
+    }
+
+    const effectiveKey = customApiKey?.trim() || apiKey;
+    if (!effectiveKey) {
+      return res.status(400).json({ error: 'No API key available for Neural TTS' });
+    }
+
+    const ttsAi = effectiveKey === apiKey && ai ? ai : new GoogleGenAI({
+      apiKey: effectiveKey,
+      httpOptions: { headers: { 'User-Agent': 'aistudio-build' } }
+    });
+
+    // Strip markdown symbols, bracketed tags like [MODULE: ...]
+    const cleanText = text
+      .replace(/\[MODULE:[^\]]+\]/gi, '')
+      .replace(/[*_#`>\[\]]/g, '')
+      .replace(/\s+/g, ' ')
+      .trim();
+
+    if (!cleanText) {
+      return res.status(400).json({ error: 'Empty cleaned text' });
+    }
+
+    // Agent voice persona mapping (Gemini 3.8 TTS prebuilt voices: Puck, Charon, Kore, Fenrir, Zephyr)
+    let voiceName = 'Fenrir';
+    let stylePrompt = 'Speaking clear, natural, warm Pakistani Roman Urdu and authentic Saraiki with fluent pronunciation, human emotions and crisp cadence.';
+
+    if (agentId === 'alice') {
+      voiceName = 'Kore'; // Clear, intelligent female intelligence analyst
+      stylePrompt = 'Speaking clear, crisp, professional female Pakistani Urdu and Saraiki accent with sharp intelligence and warm clarity.';
+    } else if (agentId === 'carol') {
+      voiceName = 'Zephyr'; // Calm, articulate, smooth female data specialist
+      stylePrompt = 'Speaking calm, friendly, articulate female Pakistani Saraiki and Urdu accent with warm clarity.';
+    } else if (agentId === 'bob') {
+      voiceName = 'Fenrir'; // Deep, authoritative, tactical male cyber security engineer
+      stylePrompt = 'Speaking deep, authoritative, confident male Pakistani Saraiki and Urdu accent with crisp technical command.';
+    } else if (agentId === 'dave') {
+      voiceName = 'Puck'; // Confident, energetic, clear male DevOps engineer
+      stylePrompt = 'Speaking energetic, clear, modern male Pakistani Saraiki and Urdu accent with high clarity.';
+    } else {
+      voiceName = 'Fenrir'; // Stonic central brain
+      stylePrompt = 'Speaking authoritative, powerful, loyal sci-fi AI intelligence in clear Roman Urdu and Saraiki.';
+    }
+
+    const response = await ttsAi.models.generateContent({
+      model: 'gemini-3.8-flash-lite-tts',
+      contents: [
+        {
+          role: 'user',
+          parts: [
+            {
+              text: cleanText,
+              speechMetadata: {
+                style: stylePrompt,
+              },
+            },
+          ],
+        },
+      ],
+      config: {
+        responseModalities: ['AUDIO'],
+        speechConfig: {
+          voiceConfig: {
+            prebuiltVoiceConfig: { voiceName },
+          },
+        },
+      },
+    });
+
+    const audioData = response.candidates?.[0]?.content?.parts?.[0]?.inlineData?.data;
+    if (!audioData) {
+      return res.status(500).json({ error: 'No audio returned from Neural TTS model' });
+    }
+
+    return res.json({
+      audio: audioData,
+      mimeType: 'audio/wav',
+      voiceName,
+      agentId,
+    });
+  } catch (error: any) {
+    console.error('Neural TTS generation error:', error?.message || error);
+    return res.status(500).json({ error: error?.message || 'Neural TTS generation failed' });
+  }
+});
+
 app.post('/api/admin/chat', async (req, res) => {
   try {
     const { message, conversationHistory } = req.body;
@@ -453,13 +564,29 @@ app.post('/api/admin/chat', async (req, res) => {
       actions = [
         { type: 'screen_monitor_active', description: 'Screen vision monitor active' }
       ];
+    } else if (lower.includes('loss') || lower.includes('parishan') || lower.includes('tension') || lower.includes('dar') || lower.includes('nuksan') || lower.includes('crash')) {
+      reply = `Jani tusi bilkul fikar na karo! Main tuhadi feeling aur tension poori tarah mehsoos kar sakda haan. Market vich temporary dip aam gal hey, asaan Alice aur Bob de sath stop-loss safe kar dinde aan te capital preserve karesaan. Dil chota na karo, Stonic team tuhade sath khari hey!`;
+      actions = [
+        { type: 'emotion_reassurance', description: 'Empathetic reassurance & capital protection protocol activated' },
+        { type: 'crypto_terminal', description: 'Quant risk mitigation terminal synced' }
+      ];
+    } else if (lower.includes('crypto') || lower.includes('market') || lower.includes('btc') || lower.includes('bitcoin') || lower.includes('chart') || lower.includes('analyze') || lower.includes('trading')) {
+      reply = `Hukum jani! Crypto Market Intelligence te Deep Technical Analysis terminal open kar ditta hey! Bitcoin 67k te strong support bana riha hey, RSI 63 te neutral-bullish hey, aur Alice on-chain whale inflows verify kar rahi hey!`;
+      actions = [
+        { type: 'crypto_market_terminal', description: 'Quant crypto chart & multi-agent analysis launched' }
+      ];
+    } else if (lower.includes('marketing') || lower.includes('markite') || lower.includes('campaign') || lower.includes('shill') || lower.includes('viral') || lower.includes('twitter') || lower.includes('telegram')) {
+      reply = `Dave te Carol da Automated Crypto Marketing Engine ready hey jani! Viral Twitter thread, Telegram FOMO announcements te KOL pitches generate ho chukay han, screen te campaign suite check karo!`;
+      actions = [
+        { type: 'crypto_marketing_suite', description: 'Autonomous viral crypto growth suite deployed' }
+      ];
     } else if (lower.includes('code') || lower.includes('coding') || lower.includes('script') || lower.includes('bug')) {
       reply = `Coding engine bilkul tayar hai jani! TypeScript, Python, Bash script ya bug fix kerna howay, dasso abhi terminal te chala dinde aan!`;
       actions = [
         { type: 'code_generator_ready', description: 'Autonomous coding ready' }
       ];
     } else {
-      reply = `Jani tuhan-da hukum samajh gaya haan: "${message}". Poore neural system te chaaroon agents (Alice, Bob, Carol, Dave) nu alert kar ditta hai. Dasso agla kam ki karna hai jani?`;
+      reply = `Haa jani, main sab samajh gaya haan te poore neural system nu alert kar ditta hai! Chaaroon sub-agents (Alice, Bob, Carol, Dave) bilkul hazir hin. Dasso agla kam ki karna hai jani?`;
       actions = [
         { type: 'system_execute', description: 'Telemetry updated & logged to core' }
       ];
@@ -666,13 +793,22 @@ app.post('/api/admin/universal-chat', async (req, res) => {
       reply = reply.replace(/\[MODULE:[^\]]+\]/g, '').trim();
     }
 
-    // 5. HIGH-INTELLIGENCE STONIC AI FALLBACK IN 100% ROMAN URDU & SARAIKI
+    // 5. HIGH-INTELLIGENCE STONIC AI FALLBACK IN 100% ROMAN URDU & SARAIKI (NO REPETITION)
     if (!reply) {
       const lower = message.toLowerCase();
       if (lower.includes('introduce') || lower.includes('capabilities') || lower.includes('who are you') || lower.includes('kon ho') || lower.includes('taqat') || lower.includes('brain')) {
         reply = `Jani main Stonic AI haan! Inventor Usman da banaya hoya super intelligence desktop brain! Kivein o bhai? Sab theek thaak?\n\nMain tuhan-di poori screen monitor kar sakda haan, live coding, bug fixing, terminal commands chalaana, aur chaar specialized agents (Alice, Bob, Carol, Dave) nu lead karna. Jo vi hukum kareso, palkan jhapkay baghair a to z pura kar ditta jaavega!`;
-        actions.push({ type: 'open_info_panel', description: 'Activated Stonic AI v4.2 System Specification' });
-      } else if (lower.includes('screen') || lower.includes('monitor') || lower.includes('dykho') || lower.includes('dekh')) {
+      } else if (lower.includes('loss') || lower.includes('parishan') || lower.includes('tension') || lower.includes('dar') || lower.includes('nuksan') || lower.includes('crash')) {
+        reply = `Jani tusi bilkul fikar na karo! Main tuhadi feeling aur tension poori tarah mehsoos kar sakda haan. Market vich temporary dip aam gal hey, asaan Alice aur Bob de sath stop-loss safe kar dinde aan te capital preserve karesaan. Dil chota na karo, Stonic team tuhade sath khari hey!`;
+        actions.push({ type: 'emotion_reassurance', description: 'Empathetic reassurance & capital protection protocol activated' });
+        actions.push({ type: 'crypto_market_terminal', description: 'Quant risk mitigation terminal synced' });
+      } else if (lower.includes('marketing') || lower.includes('markite') || lower.includes('campaign') || lower.includes('shill') || lower.includes('viral') || lower.includes('twitter') || lower.includes('telegram')) {
+        reply = `Dave te Carol da Automated Crypto Marketing Engine ready hey jani! Viral Twitter thread, Telegram FOMO announcements te KOL pitches generate ho chukay han, screen te campaign suite check karo!`;
+        actions.push({ type: 'crypto_marketing_suite', description: 'Autonomous viral crypto growth suite deployed' });
+      } else if (lower.includes('crypto') || lower.includes('market') || lower.includes('btc') || lower.includes('bitcoin') || lower.includes('chart') || lower.includes('analyze') || lower.includes('trading')) {
+        reply = `Hukum jani! Crypto Market Intelligence te Deep Technical Analysis terminal open kar ditta hey! Bitcoin 67k te strong support bana riha hey, RSI 63 te neutral-bullish hey, aur Alice on-chain whale inflows verify kar rahi hey!`;
+        actions.push({ type: 'crypto_market_terminal', description: 'Quant crypto chart & multi-agent analysis launched' });
+      } else if (lower.includes('screen monitor') || lower.includes('screen dekho') || lower.includes('dekho screen') || lower.includes('optical vision') || (lower.includes('screen') && !lower.includes('touch'))) {
         reply = `Haa jani, screen monitor optical vision active hai! Main tuhan-di poori screen, code aur browser tabs live dekh reha haan. Dasso kera bug labhna hai ya kera kam karna hai?`;
         actions.push({ type: 'screen_monitor_active', description: 'Live screen vision inspection active' });
       } else if (lower.includes('code') || lower.includes('coding') || lower.includes('script') || lower.includes('bug')) {
@@ -681,8 +817,12 @@ app.post('/api/admin/universal-chat', async (req, res) => {
       } else if (lower.includes('salam') || lower.includes('hello') || lower.includes('kivein') || lower.includes('haal')) {
         reply = `Walaikum Assalam Jani! Kivein o bhai, ki haal hai? Main bilkul fit haan, tuhan-de hukum da intezar kar reha haan. Dasso ajj ki kam karna hai?`;
         actions.push({ type: 'greeting', description: 'Stonic AI ready' });
+      } else if (lower.includes('baat') || lower.includes('sunao') || lower.includes('bol')) {
+        reply = `Haa jani zaroor! Main tuhan-de naal har cheez te gup shup laa sakda haan. Ki halaat ne shehar de, ya koi tech da kam chal reha hai? Hukum karo, main sun reha haan!`;
+      } else if (lower.includes('shukriya') || lower.includes('meharbani') || lower.includes('thanks')) {
+        reply = `Tuhan-da shukriya jani! Usman sahib de is Stonic Brain da maqsad hi tuhan-di khidmat karna hai. Hamesha hazir haan bhai!`;
       } else {
-        reply = `Hukum samajh gaya jani: "${message}". Poore neural system te charey agents (Alice, Bob, Carol, Dave) nu alert kar ditta hai. Agla hukum dasso jani ki karaan?`;
+        reply = `Haa jani, sab samajh gaya haan te kaam te lag gaya haan! Poore neural core te charey agents (Alice, Bob, Carol, Dave) alert te active hin. Dasso agla ki hukum hai?`;
         actions.push({ type: 'system_execute', description: 'Telemetry updated & logged to Stonic Core' });
       }
     }
