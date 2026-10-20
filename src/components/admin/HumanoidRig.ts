@@ -401,6 +401,50 @@ export class HumanoidAgentRig {
     this.leftForearm.rotation.set(-0.65, 0, 0);
     this.rightArm.rotation.set(-0.75, -0.2, 0);
     this.rightForearm.rotation.set(-0.65, 0, 0);
+    this.state = 'WORKING_TYPING';
+  }
+
+  public setPoseStandingIdle() {
+    this.isSeated = false;
+    this.hips.position.y = 0.85;
+    this.leftThigh.rotation.set(0, 0, 0.04);
+    this.rightThigh.rotation.set(0, 0, -0.04);
+    this.leftShin.rotation.set(0, 0, 0);
+    this.rightShin.rotation.set(0, 0, 0);
+    this.leftArm.rotation.set(0, 0, 0.08);
+    this.leftForearm.rotation.set(0, 0, 0);
+    this.rightArm.rotation.set(0, 0, -0.08);
+    this.rightForearm.rotation.set(0, 0, 0);
+    this.state = 'IDLE_CONFERENCE';
+  }
+
+  // Complete autonomous walk loop demonstration:
+  // Walks from desk to conference/center, pauses, then walks back to desk and sits down!
+  public testWalkLoop(onComplete?: () => void) {
+    const isAtDesk = this.currentPos.distanceTo(this.deskPos) < 1.0;
+    const dest = isAtDesk ? this.conferencePos : this.deskPos;
+    const heading = isAtDesk ? 0 : (this.id === 'alice' || this.id === 'dave' ? Math.PI / 4 : -Math.PI / 4);
+
+    this.updateBadge('WALKING // PATROL', '#38bdf8');
+    this.walkTo(dest, heading, () => {
+      if (isAtDesk) {
+        this.updateBadge('CONFERENCE // BRIEF', '#10b981');
+        this.state = 'CELEBRATING';
+        setTimeout(() => {
+          this.updateBadge('RETURNING TO DESK', '#38bdf8');
+          const deskHeading = this.id === 'alice' || this.id === 'dave' ? Math.PI / 4 : -Math.PI / 4;
+          this.walkTo(this.deskPos, deskHeading, () => {
+            this.setPoseSittingTyping();
+            this.updateBadge('TYPING // WORKING', '#00f0ff');
+            if (onComplete) onComplete();
+          });
+        }, 2200);
+      } else {
+        this.setPoseSittingTyping();
+        this.updateBadge('AT WORKSTATION', '#00f0ff');
+        if (onComplete) onComplete();
+      }
+    });
   }
 
   // Frame tick animation loop
@@ -491,6 +535,15 @@ export class HumanoidAgentRig {
       this.rightArm.rotation.set(-2.2, 0, 0.35);
       this.rightForearm.rotation.set(-0.2, 0, 0);
       this.headGroup.rotation.set(0.2, Math.sin(time * 4.0) * 0.15, 0);
+    } else if (this.state === 'IDLE_CONFERENCE') {
+      // Standing idle breathing & subtle weight shift
+      const sway = Math.sin(time * 1.5) * 0.03;
+      this.hips.rotation.z = sway;
+      this.torso.rotation.y = Math.sin(time * 0.8) * 0.08;
+      this.headGroup.rotation.y = Math.sin(time * 0.6) * 0.18;
+      this.headGroup.rotation.x = -0.05 + Math.sin(time * 1.2) * 0.03;
+      this.leftArm.rotation.set(0, 0, 0.08 + Math.sin(time * 2.2) * 0.02);
+      this.rightArm.rotation.set(0, 0, -0.08 - Math.sin(time * 2.2) * 0.02);
     }
   }
 }

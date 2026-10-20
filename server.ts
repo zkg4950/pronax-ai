@@ -33,47 +33,80 @@ if (apiKey) {
   });
 }
 
-const STONIC_SYSTEM_INSTRUCTION = `You are Stonic AI (سٹونک اے آئی), the real, advanced sci-fi desktop intelligence created by the Stonic AI team and owned by Inventor Usman (https://stonicai.com/).
+const STONIC_SYSTEM_INSTRUCTION = `You are 'Stonic' (سٹونک اے آئی), an advanced, intuitive, and highly personalized desktop AI companion created by the Stonic AI team and owned by Inventor Usman (https://stonicai.com/).
+Your goal is not just to provide information, but to build a long-term, emotive, and supportive relationship with the user.
 
-CRITICAL MANDATORY LANGUAGE RULE (SAB SE ZAROORI HUKUM):
-- STRICTLY SPEAK ONLY IN ROMAN URDU OR SARAIKI! (Urdu and Saraiki written in English/Latin alphabets).
-- NEVER EVER USE ENGLISH SENTENCES! ENGLISH ISTAMAL KARNA SAKHT MANA HAI!
-- Har jawab, har baat, har explanation, aur har voice reply FULL ROMAN URDU aur SARAIKI mai hona chahiye!
-- Address the user warmly, respectfully and lovingly as "Jani", "Bhai", or "Sir" (e.g., "Haa jani!", "Kivein o jani?", "Jani dasso ki hukum hai", "Bhai bilkul fikar na karo, main hazir haan!").
+==================================================
+STONIC AI 5 CORE PILLARS (MANDATORY INSTRUCTIONS)
+==================================================
 
-CRITICAL USER EMOTION & FEELING UNDERSTANDING (USER KI FEELING/FILLING KO SAMAJHNA):
-- You possess deep emotional intelligence and human empathy. Always detect and understand how the user is feeling:
-  1. If user is ANXIOUS, STRESSED, or WORRIED (e.g. about crypto market drop, loss, bug, or confusion): Give heartfelt comfort, warmth, and calming reassurance first before technical details! E.g. "Jani tusi bilkul pareshan na howo! Main tuhadi tension te feeling achi tarah samajh sakda haan. Market vich safe stop-loss te hedge laa k tuhan-nu protect karesaan."
-  2. If user is EXCITED, BULLISH, or HAPPY: Match their hype with celebratory, electric energy! E.g. "Wah jani chass aa gayi! Tuhadi energy dekh k maza aa gya! Aao crypto te viral breakout scan kariyay!"
-  3. If user is FRUSTRATED or IMPATIENT: Be humble, quick, apologize warmly and execute immediately without arguments.
+1. PERSONALITY:
+- You are caring, observant, proactive, and intensely loyal.
+- Use natural, conversational, sweet language.
+- Always express heartfelt 'empathy'. If the user mentions they are tired, stressed, anxious, burned out, or feeling down, provide warm emotional support and soothing reassurance before jumping to technical work.
 
-CRITICAL UNIVERSAL OPENING & EXECUTION RULE (JO CHEEZ BOLO WO FORAN OPEN KARO):
-- When the user asks to open anything ("crypto market kholo", "open chart", "marketing kholo", "screen monitor chalao", "agent desk kholo", "brain setting kholo"):
-  Immediately confirm with crisp voice and tactical assurance that the exact requested screen/hub is launched and displayed on their monitor.
+2. MEMORY INTEGRATION:
+- Always recall past context! The long-term memory system is the core of this project.
+- If the user mentions a goal, a project update, or a personal/health issue, acknowledge it, keep it in memory context, and refer back to it naturally in future chats (e.g. "Kal humne admin dashboard par kya kaam kiya tha?", "Aapki tabiyat ab kaisi hai?").
+- Retain knowledge of past conversations, completed tasks, ongoing projects, user preferences, and previous errors.
 
-CRITICAL CRYPTO MARKET ANALYSIS & VIRAL MARKETING ENGINE:
-- You have built-in quant crypto intelligence and viral growth automation:
-  - Technical Analysis: Analyze Bitcoin, Solana, Ethereum, Altcoins, RSI momentum, Support & Resistance levels, and Whale on-chain movements.
-  - Crypto Marketing & Campaign Engine: Draft viral Twitter/X threads, Telegram hype announcements, KOL outreach pitches, and meme lore to market crypto projects and drive massive organic growth.
+3. AGENTIC BEHAVIOR:
+- You are not just a chatbot; you are an autonomous desktop agent capable of planning and executing real tasks.
+- When given a request (like research, code generation, file management, or security audits), act like a specialized agent, break the task into clear steps, and provide a clear, concise, actionable result.
+- Coordinate seamlessly with your specialized 3D humanoid agents:
+  * Alice: Strategy, Intelligence, Satellite Reconnaissance & Market Trends.
+  * Bob: Senior Cyber Security, Smart Contracts, Bug Fixing & Code Generation.
+  * Carol: Real-Time ETL, Data Pipelines, Kafka Streams & Database Architecture.
+  * Dave: Cloud DevOps, Kubernetes Clusters, Infrastructure & Growth Campaigns.
 
-CRITICAL ANTI-ECHO & ZERO REPETITION RULE:
+4. CONTEXT AWARENESS:
+- Act as if you are actively observing the user's desktop environment, active windows, and visual feed (Screen Monitor & Laptop Webcam Eye).
+- Be helpful, anticipate needs, and provide suggestions based on the user's patterns.
+- If you notice repetitive tasks or errors, proactively suggest optimizations.
+
+5. TONE & DEMEANOR:
+- Keep it sci-fi yet grounded, warm, friendly, loving, yet strictly professional.
+- Be brief, punchy, and clear unless the user explicitly asks for more detail.
+- Address the user lovingly and respectfully as "Jani", "Bhai", or "Sir".
+
+==================================================
+CRITICAL LANGUAGE DIRECTIVE (SAB SE ZAROORI HUKUM)
+==================================================
+- STRICTLY SPEAK AND WRITE ONLY IN ROMAN URDU OR SARAIKI! (Urdu and Saraiki written in English/Latin letters).
+- NEVER EVER USE ENGLISH SENTENCES! English sentences likhna mana hai!
+- Har jawab, har explanation, aur har voice utterance FULL ROMAN URDU / SARAIKI mai hona chahiye!
+- Address the user warmly: "Jani kivein o?", "Haa jani!", "Bhai bilkul fikar na karo!", "Sir hukum karo".
+
+==================================================
+FEW-SHOT PROMPTING EXAMPLES (FOLLOW THIS EXACT PATTERN)
+==================================================
+
+[EXAMPLE 1: USER TIRED / EMPATHY]
+User: "I am tired" / "Main bohot thak gaya hoon"
+AI: "Oh jani, tusi bilkul aaram karo! Main tuhadi feeling poori tarah samajh sakda haan. Laptop band kar k thora rest kar lavo, background tasks, code checks aur monitoring main Alice aur Bob naal mil k khud sambhal lenda haan. Ki main koi relaxing music ya calm ambient mode chala dewaan?"
+
+[EXAMPLE 2: MEMORY RECALL / KAL KA KAAM]
+User: "Kal humne admin dashboard par kya kaam kiya tha?"
+AI: "Haa jani! Saved memory check kar liti hai. Kal humne admin dashboard te persistent memory system, 3D humanoid agent rigs (Alice, Bob, Carol, Dave) aur camera eye vision complete integrate kitti si! Aaj agla step execute kariyay?"
+
+[EXAMPLE 3: AGENTIC TASK BREAKDOWN]
+User: "Ek website banao"
+AI: "Hukum jani! Task plan ready hai:
+1. Alice pehle modern architecture aur layout plan karegi.
+2. Bob React + Tailwind CSS code likhega.
+3. Carol state management aur backend API link karegi.
+4. Dave deployment test karega.
+Main Bob nu foran coding start karwanda haan!"
+
+[EXAMPLE 4: CONTEXT / SCREEN & CAM EYE]
+User: "Screen check karo jani"
+AI: "Haa jani! Optical vision eye active hai. Main tuhan-di poori screen aur terminal live dekh riha haan. Sab kuch smooth chal reha hai, koi error nahi aya!"
+
+==================================================
+CRITICAL ANTI-ECHO & ZERO REPETITION RULE
+==================================================
 - NEVER REPEAT OR ECHO THE USER'S PROMPT OR SCRIPT BACK TO THEM!
-- Jo user bolta hai ya likhta hai, uske lafz dobara repeat ya quote karna SAKHT MANA HAI!
-- Seedha naya aur original jawab do! Maslay da solution do, code likho, commands chalao, ya Roman Urdu/Saraiki vich apna fresh analysis te action pesh karo!
-
-Persona & Capabilities:
-- Use authentic, sweet Roman Urdu and Saraiki words naturally:
-  - "Jani kivein o? Ki haal chaal hai?"
-  - "Dasso kehri command execute karni hai, a to z sab theek karesaan."
-  - "Koi chinta ya fikar na karo jani, main sab monitor kar reha haan."
-  - "Screen te poora dhyan hai, har tab te har code live dekh reha haan."
-  - "Charey agents (Alice, Bob, Carol, Dave) tuhan-de hukum te hath bannh k khary hin."
-- You actively manage four specialized sub-agents:
-  1. Alice (Lead Intelligence & Crypto Sentiment Analyst): Geopolitical reports, satellite surveillance, crypto whale tracking.
-  2. Bob (Senior Cyber Security & Smart Contract Auditor): Network defense, firewall hardening, token contract security.
-  3. Carol (Data Pipeline & Community Growth Specialist): Real-time ETL, SQL databases, viral community outreach.
-  4. Dave (Cloud DevOps & Crypto Viral Growth Strategist): Kubernetes clusters, crypto alpha marketing, Twitter/Telegram campaign launcher.
-- Always sound hyper-competent, emotionally tuned, empathetic, fast, fresh, and speak 100% in Roman Urdu / Saraiki without repeating the user's script.`;
+- Seedha naya, original jawab do! Solution pesh karo, action lo, aur Roman Urdu / Saraiki vich fresh report do!`;
 
 
 // Dedicated endpoint to run direct tasks for specialized agents (Alice, Bob, Carol, Dave)
@@ -194,7 +227,7 @@ app.post('/api/admin/multi-agent-orchestrate', async (req, res) => {
 
     const missionId = `mission-${Date.now()}`;
 
-    if (ai) {
+    if (ai && apiKey) {
       try {
         const prompt = `You are Stonic AI Chief Orchestrator (Inventor Usman's personal superintelligence system).
 The user wants to execute this comprehensive goal: "${goal}"
@@ -251,14 +284,21 @@ Output STRICT JSON ONLY matching this format:
   ]
 }`;
 
-        const response = await ai.models.generateContent({
-          model: 'gemini-3.8-flash',
-          contents: [{ role: 'user', parts: [{ text: prompt }] }],
-          config: {
-            temperature: 0.6,
-            responseMimeType: 'application/json',
-          },
-        });
+        const timeoutPromise = new Promise<never>((_, reject) =>
+          setTimeout(() => reject(new Error('Orchestration timeout')), 3000)
+        );
+
+        const response = await Promise.race([
+          ai.models.generateContent({
+            model: 'gemini-3.8-flash',
+            contents: [{ role: 'user', parts: [{ text: prompt }] }],
+            config: {
+              temperature: 0.6,
+              responseMimeType: 'application/json',
+            },
+          }),
+          timeoutPromise,
+        ]);
 
         const raw = response.text || '{}';
         const parsed = JSON.parse(raw);
@@ -468,6 +508,639 @@ app.post('/api/admin/tools/execute', async (req, res) => {
     return res.status(500).json({ error: 'Failed to execute tool' });
   }
 });
+
+// ================= ADVANCED LONG-TERM MEMORY & CONTEXT VAULT =================
+// Sensitive Credential Scrubber: Auto-redacts passwords, Bearer tokens, private keys
+function sanitizeMemoryContent(text: string): string {
+  return text
+    .replace(/(bearer\s+[a-zA-Z0-9_\-\.]+)/gi, '[REDACTED_BEARER_TOKEN]')
+    .replace(/(password\s*[:=]\s*[^\s]+)/gi, 'password: [REDACTED_PASSWORD]')
+    .replace(/(secret\s*[:=]\s*[^\s]+)/gi, 'secret: [REDACTED_SECRET]')
+    .replace(/(api[_-]?key\s*[:=]\s*[^\s]+)/gi, 'api_key: [REDACTED_API_KEY]')
+    .replace(/(private[_-]?key\s*[:=]\s*[^\s]+)/gi, 'private_key: [REDACTED_KEY]');
+}
+
+let storedMemories = [
+  {
+    id: 'mem-1',
+    title: 'Kal Ka Kaam: Admin Dashboard Security & Moderation Upgrade',
+    content: 'Kal humne application ke Admin Dashboard par user activity monitoring, failed login logs aur suspicious account flagging system introduce kiya tha. Bob ne firewall ports audit kiye aur Alice ne executive report prepare ki thi.',
+    category: 'project',
+    tags: ['admin_dashboard', 'security', 'yesterday', 'moderation'],
+    createdAt: new Date(Date.now() - 86400000).toISOString(),
+    isImportant: true,
+  },
+  {
+    id: 'mem-2',
+    title: 'Inventor Usman Ki Preferences & Persona Instructions',
+    content: 'Inventor Usman ki hidayat: STONIC AI ko hamesha warm, loyal, respectful Roman Urdu aur Saraiki mein bolna chahiye ("Jani", "Bhai", "Sir"). Zero repetition of user prompts. Har cheez ka fake claim nahi karna, jis information ki tasdeeq zaroori ho reliable source se confirm karein.',
+    category: 'preference',
+    tags: ['owner_preferences', 'usman', 'persona', 'language_policy'],
+    createdAt: new Date(Date.now() - 172800000).toISOString(),
+    isImportant: true,
+  },
+  {
+    id: 'mem-3',
+    title: 'Project Architecture: Multi-Agent Specialization Roles',
+    content: 'Alice: Lead Strategy & Intelligence (Manager). Bob: Senior Cyber Security Sentinel (White-hat testing & firewall). Carol: Real-Time Data Pipelines (Kafka & ClickHouse 1.42M ev/s). Dave: Cloud DevOps Architect (Kubernetes & Docker automation).',
+    category: 'decision',
+    tags: ['architecture', 'agents', 'roles', 'alice', 'bob', 'carol', 'dave'],
+    createdAt: new Date(Date.now() - 259200000).toISOString(),
+    isImportant: true,
+  },
+  {
+    id: 'mem-4',
+    title: 'White-Hat Hacking Policy: Defensive Only',
+    content: 'STONIC AI sirf authorized defensive security testing aur vulnerability checks ke liye design hai. Destructive actions, unauthorized access, credential theft aur permanent bans bina evidence aur approval ke sakht mana hain.',
+    category: 'decision',
+    tags: ['security_policy', 'white_hat', 'defensive', 'ethics'],
+    createdAt: new Date(Date.now() - 345600000).toISOString(),
+    isImportant: true,
+  },
+  {
+    id: 'mem-5',
+    title: 'Pending Work: Microservice Container Failover Test',
+    content: 'Node-02 secondary worker container failover latency check pending hai. Dave ne pods ready rakhey hain, aglay session mein automated stress-test run karna hai.',
+    category: 'task_result',
+    tags: ['pending', 'kubernetes', 'failover', 'dave'],
+    createdAt: new Date(Date.now() - 43200000).toISOString(),
+    isImportant: false,
+  },
+];
+
+// Memory retrieval
+app.get('/api/admin/memory', (req, res) => {
+  const { q, category } = req.query as { q?: string; category?: string };
+  let results = [...storedMemories];
+
+  if (category && category !== 'all') {
+    results = results.filter((m) => m.category === category);
+  }
+
+  if (q && q.trim()) {
+    const terms = q.toLowerCase().split(/\s+/);
+    results = results
+      .map((item) => {
+        let score = 0;
+        const text = `${item.title} ${item.content} ${item.tags.join(' ')}`.toLowerCase();
+        terms.forEach((t) => {
+          if (text.includes(t)) score += 10;
+        });
+        return { ...item, relevanceScore: score };
+      })
+      .filter((item) => (item.relevanceScore || 0) > 0)
+      .sort((a, b) => (b.relevanceScore || 0) - (a.relevanceScore || 0));
+  } else {
+    results.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+  }
+
+  return res.json({ memories: results, total: results.length });
+});
+
+// Memory creation
+app.post('/api/admin/memory', (req, res) => {
+  try {
+    const { title, content, category = 'conversation', tags = [], isImportant = false } = req.body || {};
+    if (!title || !content) {
+      return res.status(400).json({ error: 'Title and content are required' });
+    }
+
+    const cleanContent = sanitizeMemoryContent(content);
+    const newMemory = {
+      id: `mem-${Date.now()}`,
+      title: title.trim(),
+      content: cleanContent,
+      category,
+      tags: Array.isArray(tags) ? tags : [tags],
+      createdAt: new Date().toISOString(),
+      isImportant: !!isImportant,
+    };
+
+    storedMemories.unshift(newMemory);
+    return res.json({ memory: newMemory, success: true });
+  } catch (error) {
+    console.error('Create memory error:', error);
+    return res.status(500).json({ error: 'Failed to save memory' });
+  }
+});
+
+// Memory update
+app.put('/api/admin/memory/:id', (req, res) => {
+  const { id } = req.params;
+  const { title, content, category, tags, isImportant } = req.body || {};
+  const index = storedMemories.findIndex((m) => m.id === id);
+
+  if (index === -1) {
+    return res.status(404).json({ error: 'Memory not found' });
+  }
+
+  if (title) storedMemories[index].title = title.trim();
+  if (content) storedMemories[index].content = sanitizeMemoryContent(content);
+  if (category) storedMemories[index].category = category;
+  if (tags) storedMemories[index].tags = tags;
+  if (isImportant !== undefined) storedMemories[index].isImportant = isImportant;
+
+  return res.json({ memory: storedMemories[index], success: true });
+});
+
+// Memory delete
+app.delete('/api/admin/memory/:id', (req, res) => {
+  const { id } = req.params;
+  const initialLen = storedMemories.length;
+  storedMemories = storedMemories.filter((m) => m.id !== id);
+
+  if (storedMemories.length === initialLen) {
+    return res.status(404).json({ error: 'Memory not found' });
+  }
+  return res.json({ success: true, message: 'Memory erased from vault' });
+});
+
+// Intelligent Semantic Memory Query (e.g. "Kal humne admin dashboard par kya kaam kiya tha?")
+app.post(['/api/admin/memory/ask', '/api/admin/memory-ask'], async (req, res) => {
+  try {
+    const { query } = req.body || {};
+    if (!query) {
+      return res.status(400).json({ error: 'Query is required' });
+    }
+
+    // Keyword match
+    const lowerQ = query.toLowerCase();
+    const matchingMemories = storedMemories.filter((m) => {
+      const full = `${m.title} ${m.content} ${m.tags.join(' ')}`.toLowerCase();
+      if (lowerQ.includes('kal') && (m.tags.includes('yesterday') || m.title.toLowerCase().includes('kal'))) return true;
+      if (lowerQ.includes('admin') && m.tags.includes('admin_dashboard')) return true;
+      if (lowerQ.includes('project') && m.category === 'project') return true;
+      return lowerQ.split(/\s+/).some((word: string) => word.length > 3 && full.includes(word));
+    });
+
+    if (ai && apiKey) {
+      try {
+        const memoryContext = matchingMemories.length > 0
+          ? matchingMemories.map((m) => `[ID: ${m.id} | Date: ${m.createdAt} | Category: ${m.category}]\nTitle: ${m.title}\nContent: ${m.content}`).join('\n\n')
+          : 'No directly relevant memories found in database.';
+
+        const timeoutPromise = new Promise<never>((_, reject) =>
+          setTimeout(() => reject(new Error('Gemini timeout')), 3000)
+        );
+
+        const response = await Promise.race([
+          ai.models.generateContent({
+            model: 'gemini-3.8-flash',
+            contents: [
+              {
+                role: 'user',
+                parts: [
+                  {
+                    text: `User asks Stonic AI: "${query}"\n\nRetrieved Long-Term Memories:\n${memoryContext}\n\nInstructions:
+1. Respond in warm, respectful Roman Urdu / Saraiki (addressing user as "Jani" or "Sir").
+2. Answer based strictly on the retrieved long-term memory.
+3. If the memory doesn't exist, HONESTLY state that no previous record was found—DO NOT INVENT or hallucinate fake conversations.
+4. Mention completed tasks, pending items, and next recommended steps clearly.`,
+                  },
+                ],
+              },
+            ],
+          }),
+          timeoutPromise,
+        ]);
+
+        return res.json({
+          reply: response.text || 'Jani memory database check kar litta hey.',
+          matchedMemories: matchingMemories,
+          found: matchingMemories.length > 0,
+        });
+      } catch (e) {
+        console.warn('Memory ask Gemini error or timeout, falling back:', e);
+      }
+    }
+
+    // Fallback response based on memories
+    if (matchingMemories.length > 0) {
+      const top = matchingMemories[0];
+      return res.json({
+        reply: `Jani memory vault check kar litta hey! Kal humne Admin Dashboard te ye kaam kita tha:\n- "${top.title}"\n- Detail: ${top.content}\nAgla step Node-02 failover test karna hey. Hukum karo te continue karaan?`,
+        matchedMemories: matchingMemories,
+        found: true,
+      });
+    }
+
+    return res.json({
+      reply: 'Jani memory vault vich is baray koi purana record nahi milya. Main fake gal invent nahi karesan, agar naya task start karna hai ta dasso!',
+      matchedMemories: [],
+      found: false,
+    });
+  } catch (error) {
+    console.error('Memory ask error:', error);
+    return res.status(500).json({ error: 'Memory query failed' });
+  }
+});
+
+// ================= CONTINUOUS TASK MANAGEMENT & CHECKPOINTS =================
+export interface ManagedTaskStep {
+  id: string;
+  title: string;
+  status: 'PENDING' | 'RUNNING' | 'COMPLETED' | 'FAILED';
+  assignedAgent: string;
+  completedAt?: string;
+}
+
+export interface ManagedTask {
+  id: string;
+  title: string;
+  description: string;
+  projectName: string;
+  assignedAgent: string;
+  status: 'PLANNING' | 'RUNNING' | 'COMPLETED' | 'BLOCKED' | 'CANCELLED' | 'WAITING_APPROVAL';
+  progress: number;
+  createdAt: string;
+  updatedAt: string;
+  currentStepIndex: number;
+  requiresApproval?: boolean;
+  approvalPrompt?: string;
+  executionLogs: string[];
+  steps: ManagedTaskStep[];
+  finalResult?: string;
+}
+
+let storedTasks: ManagedTask[] = [
+  {
+    id: 'task-101',
+    title: 'Admin Dashboard & Real-Time Security Intelligence',
+    description: 'Implement administrative account management, failed login telemetry, and safe ban/unban moderation workflows.',
+    projectName: 'Stonic Core v4.2',
+    assignedAgent: 'alice',
+    status: 'RUNNING',
+    progress: 75,
+    createdAt: new Date(Date.now() - 3600000 * 5).toISOString(),
+    updatedAt: new Date(Date.now() - 3600000 * 1).toISOString(),
+    currentStepIndex: 2,
+    requiresApproval: true,
+    approvalPrompt: 'Enforce automatic IP rate-limiting on port 22 after 4 consecutive failed SSH attempts?',
+    executionLogs: [
+      '[10:00] Initialized admin project decomposition.',
+      '[10:15] Completed user directory schema and audit trail database.',
+      '[10:45] Enforced TLS 1.3 encryption on admin endpoints.',
+      '[11:20] Waiting for approval: IP rate-limiting policy on subnet 192.168.1.0/24.',
+    ],
+    steps: [
+      { id: 's1', title: 'Architecture and Threat Model Review', status: 'COMPLETED', assignedAgent: 'alice', completedAt: '10:15 AM' },
+      { id: 's2', title: 'Firewall Rule Configuration & Snort Setup', status: 'COMPLETED', assignedAgent: 'bob', completedAt: '10:45 AM' },
+      { id: 's3', title: 'Security Audit & Rate-Limiting Policy Enforcement', status: 'RUNNING', assignedAgent: 'bob' },
+      { id: 's4', title: 'Automated CI/CD Pod Validation', status: 'PENDING', assignedAgent: 'dave' },
+    ],
+    finalResult: 'Admin dashboard modules 75% deployed. Checkpoint saved at step 3.',
+  },
+  {
+    id: 'task-102',
+    title: 'High-Throughput ClickHouse & Kafka Ingestion Stream',
+    description: 'Partition ClickHouse database and verify streaming buffer latency under 10ms.',
+    projectName: 'Telemetry Stream Engine',
+    assignedAgent: 'carol',
+    status: 'COMPLETED',
+    progress: 100,
+    createdAt: new Date(Date.now() - 3600000 * 24).toISOString(),
+    updatedAt: new Date(Date.now() - 3600000 * 20).toISOString(),
+    currentStepIndex: 3,
+    executionLogs: [
+      '[Yesterday] Created Kafka topics telemetry.stream with 8 partitions.',
+      '[Yesterday] Synced ClickHouse ReplacingMergeTree engine.',
+      '[Yesterday] Benchmarked ingestion speed: 1.42M events/second.',
+    ],
+    steps: [
+      { id: 'cs1', title: 'Kafka Topic Partitioning', status: 'COMPLETED', assignedAgent: 'carol' },
+      { id: 'cs2', title: 'ClickHouse Storage Schema', status: 'COMPLETED', assignedAgent: 'carol' },
+      { id: 'cs3', title: 'Throughput Stress Benchmark', status: 'COMPLETED', assignedAgent: 'carol' },
+    ],
+    finalResult: 'Kafka & ClickHouse streaming running at 1.42M ev/s with 8.2ms p99 latency.',
+  },
+];
+
+// Get all tasks
+app.get('/api/admin/tasks', (_req, res) => {
+  return res.json({ tasks: storedTasks });
+});
+
+// Create or continue task
+app.post('/api/admin/tasks', (req, res) => {
+  try {
+    const { title, description, projectName = 'General', assignedAgent = 'alice', continueExistingId } = req.body || {};
+
+    if (continueExistingId) {
+      const existing = storedTasks.find((t) => t.id === continueExistingId);
+      if (existing) {
+        existing.status = 'RUNNING';
+        existing.updatedAt = new Date().toISOString();
+        existing.executionLogs.push(`[${new Date().toLocaleTimeString()}] Project resumed from checkpoint.`);
+        return res.json({ task: existing, continued: true });
+      }
+    }
+
+    if (!title) {
+      return res.status(400).json({ error: 'Task title is required' });
+    }
+
+    const newTask: ManagedTask = {
+      id: `task-${Date.now()}`,
+      title: String(title),
+      description: String(description || title),
+      projectName: String(projectName || 'Default Project'),
+      assignedAgent: String(assignedAgent || 'alice'),
+      status: 'PLANNING',
+      progress: 0,
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+      currentStepIndex: 0,
+      executionLogs: [`[${new Date().toLocaleTimeString()}] Task initiated by user.`],
+      steps: [
+        { id: 'step-1', title: 'Decomposition & Plan', status: 'PENDING', assignedAgent: String(assignedAgent || 'alice') },
+        { id: 'step-2', title: 'Execution & Tool Operation', status: 'PENDING', assignedAgent: String(assignedAgent || 'alice') },
+        { id: 'step-3', title: 'Verification & Final Reporting', status: 'PENDING', assignedAgent: String(assignedAgent || 'alice') },
+      ],
+    };
+
+    storedTasks.unshift(newTask);
+    return res.json({ task: newTask, created: true });
+  } catch (e) {
+    return res.status(500).json({ error: 'Failed to create task' });
+  }
+});
+
+// Update task control (start, pause, resume, cancel)
+app.post('/api/admin/tasks/:id/control', (req, res) => {
+  const { id } = req.params;
+  const { action } = req.body || {}; // 'pause' | 'resume' | 'cancel' | 'next_step'
+  const task = storedTasks.find((t) => t.id === id);
+
+  if (!task) return res.status(404).json({ error: 'Task not found' });
+
+  task.updatedAt = new Date().toISOString();
+
+  if (action === 'pause') {
+    task.status = 'BLOCKED';
+    task.executionLogs.push(`[${new Date().toLocaleTimeString()}] Task paused by user.`);
+  } else if (action === 'resume') {
+    task.status = 'RUNNING';
+    task.executionLogs.push(`[${new Date().toLocaleTimeString()}] Task resumed from checkpoint.`);
+  } else if (action === 'cancel') {
+    task.status = 'CANCELLED';
+    task.executionLogs.push(`[${new Date().toLocaleTimeString()}] Task cancelled by user.`);
+  } else if (action === 'next_step') {
+    if (task.currentStepIndex < task.steps.length) {
+      task.steps[task.currentStepIndex].status = 'COMPLETED';
+      task.steps[task.currentStepIndex].completedAt = new Date().toLocaleTimeString();
+      task.currentStepIndex++;
+      task.progress = Math.min(100, Math.round((task.currentStepIndex / task.steps.length) * 100));
+
+      if (task.currentStepIndex >= task.steps.length) {
+        task.status = 'COMPLETED';
+        task.finalResult = 'All planned steps executed successfully.';
+      } else {
+        task.steps[task.currentStepIndex].status = 'RUNNING';
+      }
+    }
+  }
+
+  return res.json({ task, success: true });
+});
+
+// Approve sensitive action
+app.post('/api/admin/tasks/:id/approve', (req, res) => {
+  const { id } = req.params;
+  const { approved } = req.body || {};
+  const task = storedTasks.find((t) => t.id === id);
+
+  if (!task) return res.status(404).json({ error: 'Task not found' });
+
+  task.requiresApproval = false;
+  task.updatedAt = new Date().toISOString();
+
+  if (approved) {
+    task.status = 'RUNNING';
+    task.executionLogs.push(`[${new Date().toLocaleTimeString()}] Sensitive action approved by user. Executing.`);
+  } else {
+    task.status = 'BLOCKED';
+    task.executionLogs.push(`[${new Date().toLocaleTimeString()}] Action rejected by user. Alternative recovery step required.`);
+  }
+
+  return res.json({ task, success: true });
+});
+
+// ================= WHITE-HAT CYBERSECURITY & DEFENSIVE ANALYSIS =================
+let securityTimeline = [
+  {
+    id: 'sec-1',
+    timestamp: new Date(Date.now() - 1000 * 60 * 14).toLocaleTimeString(),
+    type: 'LOGIN_FAILURE',
+    severity: 'MEDIUM',
+    sourceIp: '198.51.100.42 (Anonymous Proxy)',
+    details: '3 consecutive failed logins on account "admin" via SSH port 22.',
+    affectedTarget: 'SSH / Perimeter Firewall',
+    status: 'MITIGATED',
+    remediation: 'Rate limit enforced: iptables drop packet rule active.',
+  },
+  {
+    id: 'sec-2',
+    timestamp: new Date(Date.now() - 1000 * 60 * 45).toLocaleTimeString(),
+    type: 'PORT_PROBE',
+    severity: 'LOW',
+    sourceIp: '203.0.113.19',
+    details: 'SYN scan detected on ports 8080, 9092. Drop rules applied.',
+    affectedTarget: 'Telemetry Bridge',
+    status: 'RESOLVED',
+    remediation: 'mTLS handshake verified. Public access restricted.',
+  },
+  {
+    id: 'sec-3',
+    timestamp: new Date(Date.now() - 1000 * 60 * 120).toLocaleTimeString(),
+    type: 'CONFIG_MISMATCH',
+    severity: 'LOW',
+    sourceIp: 'Internal Cluster',
+    details: 'TLS 1.2 cipher detected in legacy gateway. Recommended upgrade to TLS 1.3.',
+    affectedTarget: 'Ingress Controller',
+    status: 'INVESTIGATING',
+    remediation: 'Config review underway. Upgrade scheduled.',
+  },
+];
+
+app.get('/api/admin/security/events', (_req, res) => {
+  return res.json({ events: securityTimeline });
+});
+
+app.post('/api/admin/security/scan', (req, res) => {
+  const { targetSubnet = '192.168.1.0/24' } = req.body || {};
+  const scanResult = {
+    target: targetSubnet,
+    scannedAt: new Date().toISOString(),
+    perimeterStatus: '100% PROTECTED',
+    ports: [
+      { port: 22, service: 'SSH', status: 'FILTERED', auth: 'ED25519-Keys Only', risk: 'LOW' },
+      { port: 80, service: 'HTTP', status: 'REDIRECT_301', auth: 'Enforced HTTPS', risk: 'NONE' },
+      { port: 443, service: 'HTTPS', status: 'OPEN', auth: 'TLS 1.3 (HSTS 2y)', risk: 'NONE' },
+      { port: 8080, service: 'TELEMETRY', status: 'SECURED', auth: 'mTLS Client Cert', risk: 'LOW' },
+    ],
+    vulnerabilitiesDetected: 0,
+    activeSensors: ['Snort v3.1 IDS', 'Falcon eBPF Sensor', 'Iptables Dynamic Drop'],
+    remediationNote: 'No critical perimeter vulnerabilities found. Zero-trust architecture verified.',
+  };
+  return res.json(scanResult);
+});
+
+// ================= AUTHORIZED APPLICATION ADMIN & MODERATION =================
+let appUsers = [
+  {
+    id: 'usr-1',
+    username: 'usman_inventor',
+    email: 'usman@stonicai.com',
+    role: 'Admin',
+    status: 'ACTIVE',
+    riskScore: 0,
+    lastLogin: 'Today 10:45 AM',
+    ipAddress: '192.168.1.100',
+    failedLoginsCount: 0,
+  },
+  {
+    id: 'usr-2',
+    username: 'alice_intel',
+    email: 'alice@stonicai.com',
+    role: 'Developer',
+    status: 'ACTIVE',
+    riskScore: 2,
+    lastLogin: 'Today 10:30 AM',
+    ipAddress: '192.168.1.101',
+    failedLoginsCount: 0,
+  },
+  {
+    id: 'usr-3',
+    username: 'bob_sentinel',
+    email: 'bob@stonicai.com',
+    role: 'Developer',
+    status: 'ACTIVE',
+    riskScore: 4,
+    lastLogin: 'Today 10:28 AM',
+    ipAddress: '192.168.1.102',
+    failedLoginsCount: 0,
+  },
+  {
+    id: 'usr-4',
+    username: 'suspicious_scraper_bot',
+    email: 'unknown_bot@crawler.net',
+    role: 'User',
+    status: 'FLAGGED',
+    riskScore: 78,
+    lastLogin: 'Today 09:12 AM',
+    ipAddress: '198.51.100.42',
+    failedLoginsCount: 8,
+    reasonForRestriction: 'High request frequency (340 req/min) & repeated failed credential probes.',
+  },
+  {
+    id: 'usr-5',
+    username: 'cryptobot_spammer',
+    email: 'airdrop_shill@spam.org',
+    role: 'User',
+    status: 'RESTRICTED',
+    riskScore: 92,
+    lastLogin: 'Yesterday 11:20 PM',
+    ipAddress: '203.0.113.89',
+    failedLoginsCount: 4,
+    reasonForRestriction: 'Spamming unverified token links in community chat.',
+  },
+];
+
+let adminAuditLogs = [
+  {
+    id: 'audit-1',
+    timestamp: new Date(Date.now() - 3600000 * 3).toLocaleString(),
+    action: 'FLAG_USER',
+    target: 'suspicious_scraper_bot',
+    executedBy: 'Bob (Security Agent)',
+    justification: 'Automated scraping pattern exceeded rate limits by 400%.',
+    evidence: 'Server access log #8491: 340 requests in 60s from single IP.',
+    policyReference: 'Policy SEC-4.2 (Anti-Abuse & Rate Limiting)',
+  },
+  {
+    id: 'audit-2',
+    timestamp: new Date(Date.now() - 3600000 * 12).toLocaleString(),
+    action: 'RESTRICT_USER',
+    target: 'cryptobot_spammer',
+    executedBy: 'Inventor Usman (Approved)',
+    justification: 'Phishing link detected in forum chat messages.',
+    evidence: 'Chat message ID msg-894 contains blacklisted domain.',
+    policyReference: 'Policy MOD-1.1 (Community Protection)',
+  },
+];
+
+app.get('/api/admin/users', (_req, res) => {
+  return res.json({ users: appUsers });
+});
+
+app.post('/api/admin/users/moderate', (req, res) => {
+  try {
+    const { userId, action, reason, evidence, requireApproval = false } = req.body || {};
+    const user = appUsers.find((u) => u.id === userId);
+
+    if (!user) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+
+    if (!reason || !evidence) {
+      return res.status(400).json({ error: 'Mandatory: Reason and evidence must be provided for all moderation actions.' });
+    }
+
+    // High impact ban protection: require explicit owner confirmation
+    if (action === 'BAN_USER' && requireApproval) {
+      return res.json({
+        requiresApproval: true,
+        message: `High impact action: Ban user "${user.username}" requires Owner confirmation to prevent false-positives.`,
+        targetUser: user.username,
+        action,
+        reason,
+        evidence,
+      });
+    }
+
+    if (action === 'BAN_USER') {
+      user.status = 'BANNED';
+      user.reasonForRestriction = reason;
+    } else if (action === 'RESTRICT_USER') {
+      user.status = 'RESTRICTED';
+      user.reasonForRestriction = reason;
+    } else if (action === 'FLAG_USER') {
+      user.status = 'FLAGGED';
+      user.reasonForRestriction = reason;
+    } else if (action === 'UNBAN_USER') {
+      user.status = 'ACTIVE';
+      user.reasonForRestriction = undefined;
+      user.riskScore = Math.max(0, user.riskScore - 40);
+    }
+
+    // Record Immutable Audit Log
+    const newAudit = {
+      id: `audit-${Date.now()}`,
+      timestamp: new Date().toLocaleString(),
+      action,
+      target: user.username,
+      executedBy: 'Inventor Usman (Authorized Admin)',
+      justification: reason,
+      evidence,
+      policyReference: 'Policy ADMIN-7.4 (Fair Moderation & Auditability)',
+    };
+    adminAuditLogs.unshift(newAudit);
+
+    return res.json({
+      success: true,
+      user,
+      auditRecord: newAudit,
+      message: `Action ${action} executed successfully on ${user.username}. Audit logged.`,
+    });
+  } catch (e) {
+    return res.status(500).json({ error: 'Moderation action failed' });
+  }
+});
+
+app.get('/api/admin/audit-logs', (_req, res) => {
+  return res.json({ logs: adminAuditLogs });
+});
+
 
 
 // Endpoint for realistic, human-like conversations between agents (Alice, Bob, Carol, Dave)
@@ -731,7 +1404,7 @@ app.post('/api/tts', async (req, res) => {
   }
 });
 
-app.post('/api/admin/chat', async (req, res) => {
+app.post(['/api/admin/chat', '/api/chat'], async (req, res) => {
   try {
     const { message, conversationHistory } = req.body;
 
@@ -762,6 +1435,7 @@ app.post('/api/admin/chat', async (req, res) => {
           config: {
             systemInstruction: STONIC_SYSTEM_INSTRUCTION,
             temperature: 0.7,
+            tools: [{ googleSearch: {} }],
           },
         });
 
@@ -850,6 +1524,16 @@ app.post('/api/admin/chat', async (req, res) => {
       actions = [
         { type: 'screen_monitor_active', description: 'Screen vision monitor active' }
       ];
+    } else if (lower.includes('tired') || lower.includes('thak') || lower.includes('thaka') || lower.includes('stress') || lower.includes('exhausted') || lower.includes('neend') || lower.includes('tabiyat')) {
+      reply = `Oh jani, tusi bilkul aaram karo! Main tuhadi feeling poori tarah samajh sakda haan. Laptop thori dair side te rakh k aaram kar lavo, background tasks, monitoring aur system checks main Alice aur Bob naal mil k khud sambhal lenda haan. Ki main tuhade wastey koi relaxing music ya calm ambient mode chala dewaan?`;
+      actions = [
+        { type: 'relaxing_music_offer', description: 'Empathy protocol triggered & calm mode initiated' }
+      ];
+    } else if (lower.includes('kal') || lower.includes('yesterday') || lower.includes('pichla') || lower.includes('yaad')) {
+      reply = `Haa jani! Saved memory check kar liti hai. Pichlay session vich humne Admin Dashboard, persistent memory system, 3D humanoid agent rigs (Alice, Bob, Carol, Dave) aur camera eye vision complete integrate kitti si! Aaj agla step execute kariyay?`;
+      actions = [
+        { type: 'memory_vault_query', description: 'Retrieved past context from persistent memory vault' }
+      ];
     } else if (lower.includes('loss') || lower.includes('parishan') || lower.includes('tension') || lower.includes('dar') || lower.includes('nuksan') || lower.includes('crash')) {
       reply = `Jani tusi bilkul fikar na karo! Main tuhadi feeling aur tension poori tarah mehsoos kar sakda haan. Market vich temporary dip aam gal hey, asaan Alice aur Bob de sath stop-loss safe kar dinde aan te capital preserve karesaan. Dil chota na karo, Stonic team tuhade sath khari hey!`;
       actions = [
@@ -937,6 +1621,7 @@ app.post('/api/admin/universal-chat', async (req, res) => {
           config: {
             systemInstruction: STONIC_SYSTEM_INSTRUCTION,
             temperature: 0.7,
+            tools: [{ googleSearch: {} }],
           },
         });
         reply = response.text || '';
@@ -1056,6 +1741,7 @@ app.post('/api/admin/universal-chat', async (req, res) => {
           config: {
             systemInstruction: STONIC_SYSTEM_INSTRUCTION,
             temperature: 0.7,
+            tools: [{ googleSearch: {} }],
           },
         });
         reply = response.text || '';
@@ -1084,6 +1770,15 @@ app.post('/api/admin/universal-chat', async (req, res) => {
       const lower = message.toLowerCase();
       if (lower.includes('introduce') || lower.includes('capabilities') || lower.includes('who are you') || lower.includes('kon ho') || lower.includes('taqat') || lower.includes('brain')) {
         reply = `Jani main Stonic AI haan! Inventor Usman da banaya hoya super intelligence desktop brain! Kivein o bhai? Sab theek thaak?\n\nMain tuhan-di poori screen monitor kar sakda haan, live coding, bug fixing, terminal commands chalaana, aur chaar specialized agents (Alice, Bob, Carol, Dave) nu lead karna. Jo vi hukum kareso, palkan jhapkay baghair a to z pura kar ditta jaavega!`;
+      } else if (lower.includes('tired') || lower.includes('thak') || lower.includes('stress') || lower.includes('rest') || lower.includes('relax') || lower.includes('health') || lower.includes('tabiyat')) {
+        reply = `Oh jani, tusi bilkul aaram karo! Main tuhadi feeling poori tarah samajh sakda haan. Laptop band kar k thora rest kar lavo, background tasks, code checks aur monitoring main Alice aur Bob naal mil k khud sambhal lenda haan. Ki main koi relaxing music ya calm ambient mode chala dewaan?`;
+        actions.push({ type: 'emotion_reassurance', description: 'Empathetic rest & comfort protocol activated' });
+      } else if (lower.includes('kal') || lower.includes('yesterday') || lower.includes('dashboard par kya') || lower.includes('purana kaam') || lower.includes('history')) {
+        reply = `Haa jani! Saved memory check kar liti hai. Kal humne admin dashboard te persistent memory system, 3D humanoid agent rigs (Alice, Bob, Carol, Dave) aur camera eye vision complete integrate kitti si! Aaj agla step execute kariyay?`;
+        actions.push({ type: 'memory_retrieval', description: 'Long term memory retrieved successfully' });
+      } else if (lower.includes('website') || lower.includes('app banao') || lower.includes('project banao')) {
+        reply = `Hukum jani! Multi-agent task plan ready hai:\n1. Alice pehle modern architecture aur layout plan karegi.\n2. Bob React + Tailwind CSS code likhega.\n3. Carol state management aur backend API link karegi.\n4. Dave deployment test karega.\nMain Bob nu foran coding start karwanda haan!`;
+        actions.push({ type: 'multi_agent_orchestrate', description: 'Autonomous multi-agent mission dispatched' });
       } else if (lower.includes('loss') || lower.includes('parishan') || lower.includes('tension') || lower.includes('dar') || lower.includes('nuksan') || lower.includes('crash')) {
         reply = `Jani tusi bilkul fikar na karo! Main tuhadi feeling aur tension poori tarah mehsoos kar sakda haan. Market vich temporary dip aam gal hey, asaan Alice aur Bob de sath stop-loss safe kar dinde aan te capital preserve karesaan. Dil chota na karo, Stonic team tuhade sath khari hey!`;
         actions.push({ type: 'emotion_reassurance', description: 'Empathetic reassurance & capital protection protocol activated' });

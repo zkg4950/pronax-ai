@@ -24,6 +24,7 @@ import {
   Layers,
   ChevronDown,
   ChevronUp,
+  Camera,
 } from 'lucide-react';
 import {
   speakAgentDialogue,
@@ -44,6 +45,7 @@ interface AgentOffice3DProps {
   onBackToDashboard?: () => void;
   onOpenCryptoMarket?: () => void;
   onOpenCryptoMarketing?: () => void;
+  onOpenScreenMonitor?: () => void;
   userEmotion?: any;
 }
 
@@ -294,6 +296,7 @@ export const AgentOffice3D: React.FC<AgentOffice3DProps> = ({
   onBackToDashboard,
   onOpenCryptoMarket,
   onOpenCryptoMarketing,
+  onOpenScreenMonitor,
   userEmotion,
 }) => {
   const mountRef = useRef<HTMLDivElement>(null);
@@ -303,6 +306,10 @@ export const AgentOffice3D: React.FC<AgentOffice3DProps> = ({
   const [selectedAgentId, setSelectedAgentId] = useState<'alice' | 'bob' | 'carol' | 'dave'>('alice');
   const [activeSpeechText, setActiveSpeechText] = useState<string | null>(null);
   const [speakingAgentId, setSpeakingAgentId] = useState<string | null>(null);
+  const speakingAgentIdRef = useRef<string | null>(null);
+  useEffect(() => {
+    speakingAgentIdRef.current = speakingAgentId;
+  }, [speakingAgentId]);
   const [soundEnabled, setSoundEnabled] = useState(true);
   const [voiceMode, setVoiceMode] = useState<'native_urdu_hindi' | 'english_clear'>('native_urdu_hindi');
   const [notification, setNotification] = useState<string | null>(null);
@@ -945,7 +952,7 @@ export const AgentOffice3D: React.FC<AgentOffice3DProps> = ({
 
       // Animate Articulated Humanoid Agent Rigs
       Object.entries(agentRigsRef.current).forEach(([key, rig]) => {
-        const isSpeaking = speakingAgentId === key;
+        const isSpeaking = speakingAgentIdRef.current === key;
         const lip = currentLipSyncRef.current;
         rig.update(time, delta, isSpeaking, lip, camera.position);
       });
@@ -1043,6 +1050,18 @@ export const AgentOffice3D: React.FC<AgentOffice3DProps> = ({
             <span>⚡ MULTI-AGENT MISSION</span>
           </button>
 
+          {/* 📷 OPTICAL EYE (CAMERA & SCREEN MONITOR) */}
+          {onOpenScreenMonitor && (
+            <button
+              onClick={onOpenScreenMonitor}
+              className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-cyan-950/80 border border-cyan-400 text-cyan-200 font-bold shadow-[0_0_12px_rgba(0,240,255,0.3)] hover:bg-cyan-900/60 cursor-pointer"
+              title="Activate Stonic Optical Vision (Webcam Eye & Desktop Screen Monitor)"
+            >
+              <Camera className="w-3.5 h-3.5 text-emerald-400 animate-pulse" />
+              <span>OPTICAL EYE (CAM/SCREEN)</span>
+            </button>
+          )}
+
           {/* Agent Status Pills */}
           {Object.values(AGENTS_META).map((agent) => {
             const isSpeaking = speakingAgentId === agent.id;
@@ -1133,6 +1152,90 @@ export const AgentOffice3D: React.FC<AgentOffice3DProps> = ({
 
         {/* Top Glow Overlay */}
         <div className="absolute inset-0 pointer-events-none bg-gradient-to-t from-[#02070e] via-transparent to-[#02070e]/40" />
+
+        {/* Live Motion Test Bar for Selected Agent */}
+        <div className="absolute top-2.5 left-1/2 -translate-x-1/2 z-20 flex items-center gap-1.5 p-1 rounded-xl bg-[#02111d]/90 border border-cyan-400/50 shadow-[0_0_25px_rgba(0,240,255,0.3)] backdrop-blur-md font-mono-tech text-[11px] max-w-[96vw] overflow-x-auto">
+          <span className="px-2 py-0.5 rounded bg-cyan-500/20 text-cyan-200 font-bold border border-cyan-400/40 uppercase whitespace-nowrap">
+            TEST {AGENTS_META[selectedAgentId].name.toUpperCase()} (HUMAN RIG):
+          </span>
+          <button
+            onClick={() => {
+              const rig = agentRigsRef.current[selectedAgentId];
+              if (rig) rig.testWalkLoop();
+              setNotification(`${AGENTS_META[selectedAgentId].name} walking patrol loop & returning to desk!`);
+              playRadioChirp();
+            }}
+            className="flex items-center gap-1 px-2.5 py-1 rounded bg-[#032035] border border-cyan-400 text-cyan-100 hover:bg-cyan-500 hover:text-slate-950 font-bold transition-all cursor-pointer whitespace-nowrap"
+            title="Agent stands, walks to meeting table, pauses, walks back to desk and sits down!"
+          >
+            <span>🚶 WALK &amp; SIT LOOP</span>
+          </button>
+
+          <button
+            onClick={() => {
+              const rig = agentRigsRef.current[selectedAgentId];
+              if (rig) {
+                rig.setPoseSittingTyping();
+                rig.updateBadge('SEATED // DESK', '#00f0ff');
+              }
+              setNotification(`${AGENTS_META[selectedAgentId].name} seated in chair with legs bent 90°`);
+              playConfirmChime();
+            }}
+            className="flex items-center gap-1 px-2.5 py-1 rounded bg-[#032035] border border-cyan-500/40 text-cyan-200 hover:bg-cyan-900/60 font-bold cursor-pointer whitespace-nowrap"
+            title="Sit in chair with thighs horizontal and knees bent"
+          >
+            <span>🪑 SIT IN CHAIR</span>
+          </button>
+
+          <button
+            onClick={() => {
+              const rig = agentRigsRef.current[selectedAgentId];
+              if (rig) {
+                rig.state = 'WORKING_TYPING';
+                rig.isSeated = true;
+                rig.updateBadge('TYPING // CODE', '#10b981');
+              }
+              setNotification(`${AGENTS_META[selectedAgentId].name} typing at mechanical keyboard on computer`);
+              playConfirmChime();
+            }}
+            className="flex items-center gap-1 px-2.5 py-1 rounded bg-[#032035] border border-cyan-500/40 text-emerald-300 hover:bg-emerald-950 font-bold cursor-pointer whitespace-nowrap"
+            title="Type rapidly on keyboard with monitors updating"
+          >
+            <span>⌨️ TYPE ON PC</span>
+          </button>
+
+          <button
+            onClick={() => {
+              const rig = agentRigsRef.current[selectedAgentId];
+              if (rig) {
+                rig.setPoseStandingIdle();
+                rig.updateBadge('STANDING // IDLE', '#38bdf8');
+              }
+              setNotification(`${AGENTS_META[selectedAgentId].name} standing upright, breathing & looking around`);
+              playConfirmChime();
+            }}
+            className="flex items-center gap-1 px-2.5 py-1 rounded bg-[#032035] border border-cyan-500/40 text-sky-300 hover:bg-sky-950 font-bold cursor-pointer whitespace-nowrap"
+            title="Stand up and breathe with subtle weight shift"
+          >
+            <span>🧍 STAND IDLE</span>
+          </button>
+
+          <button
+            onClick={() => {
+              const rig = agentRigsRef.current[selectedAgentId];
+              if (rig) {
+                rig.state = 'CELEBRATING';
+                rig.updateBadge('TASK VICTORY', '#10b981');
+              }
+              setNotification(`${AGENTS_META[selectedAgentId].name} celebration: arms raised & badge emerald green!`);
+              playConfirmChime();
+            }}
+            className="flex items-center gap-1 px-2.5 py-1 rounded bg-[#032035] border border-emerald-500/40 text-emerald-200 hover:bg-emerald-950 font-bold cursor-pointer whitespace-nowrap"
+            title="Victory pose with arms raised"
+          >
+            <span>🎉 CELEBRATE</span>
+          </button>
+        </div>
 
         {/* Real-time Notification Banner */}
         {notification && (
@@ -1406,6 +1509,19 @@ export const AgentOffice3D: React.FC<AgentOffice3DProps> = ({
         onClose={() => setIsMissionModalOpen(false)}
         onDispatchMissionTo3D={handleDispatchMissionTo3D}
         onSpeakText={(text, aid) => triggerAgentSpeech(aid, text, 'Executive briefing in progress.')}
+      />
+
+      {/* ================= 6. AGENT INSPECTOR DRAWER ================= */}
+      <AgentInspectorDrawer
+        isOpen={isInspectorOpen}
+        onClose={() => setIsInspectorOpen(false)}
+        agentId={selectedAgentId}
+        agentMeta={AGENTS_META[selectedAgentId]}
+        onDispatchDirective={handleDispatchDirective}
+        onTriggerVoice={(u, e) => triggerAgentSpeech(selectedAgentId, u, e)}
+        onFlyToAgent={() => setCameraPreset(selectedAgentId.toUpperCase() as CameraPreset)}
+        isExecuting={isExecutingTask}
+        lastExecutionOutput={lastOutputs[selectedAgentId]}
       />
     </div>
   );

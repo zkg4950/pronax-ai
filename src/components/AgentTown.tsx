@@ -10,6 +10,7 @@ interface AgentTownProps {
   onBackToDashboard?: () => void;
   onOpenCryptoMarket?: () => void;
   onOpenCryptoMarketing?: () => void;
+  onOpenScreenMonitor?: () => void;
   userEmotion?: any;
 }
 
@@ -21,6 +22,7 @@ export const AgentTown: React.FC<AgentTownProps> = ({
   onBackToDashboard,
   onOpenCryptoMarket,
   onOpenCryptoMarketing,
+  onOpenScreenMonitor,
   userEmotion,
 }) => {
   return (
@@ -47,6 +49,7 @@ export const AgentTown: React.FC<AgentTownProps> = ({
         onBackToDashboard={onBackToDashboard}
         onOpenCryptoMarket={onOpenCryptoMarket}
         onOpenCryptoMarketing={onOpenCryptoMarketing}
+        onOpenScreenMonitor={onOpenScreenMonitor}
         userEmotion={userEmotion}
       />
     </div>

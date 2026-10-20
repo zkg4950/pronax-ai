@@ -56,9 +56,9 @@ export const ScreenMonitorDeck: React.FC<ScreenMonitorDeckProps> = ({
   const [actionSuccessMsg, setActionSuccessMsg] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState<'vision' | 'controls' | 'actions' | 'history'>('vision');
 
-  // Autonomous Lifetime Supervision State ("Bas Aik Baar Bol Do")
   const [isLifetimeAutoPilot, setIsLifetimeAutoPilot] = useState<boolean>(true);
   const [autoExecuteActions, setAutoExecuteActions] = useState<boolean>(true);
+  const [captureSource, setCaptureSource] = useState<'screen' | 'webcam'>('screen');
   const [oneShotMission, setOneShotMission] = useState<string>(
     'Supervise active app & terminal continuously. Auto-detect errors and fix automatically.'
   );
@@ -99,21 +99,38 @@ export const ScreenMonitorDeck: React.FC<ScreenMonitorDeckProps> = ({
     [brainConfig.autoSpeak, brainConfig.voiceSpeed, brainConfig.voicePitch]
   );
 
-  // Start Screen Capture via Display Media API
-  const handleStartCapture = async () => {
+  // Start Capture via Display Media API (Screen) or UserMedia API (Webcam Eye)
+  const handleStartCapture = async (overrideSource?: 'screen' | 'webcam') => {
+    const activeSource = overrideSource || captureSource;
     try {
-      if (!navigator.mediaDevices?.getDisplayMedia) {
-        alert('Display Media API is not supported in this browser.');
-        return;
-      }
+      let mediaStream: MediaStream;
 
-      const mediaStream = await navigator.mediaDevices.getDisplayMedia({
-        video: {
-          cursor: 'always',
-          displaySurface: 'monitor',
-        } as any,
-        audio: false,
-      });
+      if (activeSource === 'webcam') {
+        if (!navigator.mediaDevices?.getUserMedia) {
+          alert('Webcam Camera API is not supported in this browser.');
+          return;
+        }
+        mediaStream = await navigator.mediaDevices.getUserMedia({
+          video: {
+            facingMode: 'user',
+            width: { ideal: 1280 },
+            height: { ideal: 720 },
+          },
+          audio: false,
+        });
+      } else {
+        if (!navigator.mediaDevices?.getDisplayMedia) {
+          alert('Display Media API is not supported in this browser.');
+          return;
+        }
+        mediaStream = await navigator.mediaDevices.getDisplayMedia({
+          video: {
+            cursor: 'always',
+            displaySurface: 'monitor',
+          } as any,
+          audio: false,
+        });
+      }
 
       setStream(mediaStream);
       setIsCapturing(true);
@@ -128,10 +145,14 @@ export const ScreenMonitorDeck: React.FC<ScreenMonitorDeckProps> = ({
 
       // Trigger first scan immediately after stream begins
       setTimeout(() => {
-        handleAnalyzeFrame('Continuous lifetime surveillance initiated. Map active application and UI controls.');
+        const welcomePrompt =
+          activeSource === 'webcam'
+            ? 'Live optical webcam eye active. Observe user presence, facial emotion, physical notes/documents, and workstation surroundings.'
+            : 'Continuous lifetime surveillance initiated. Map active application and UI controls.';
+        handleAnalyzeFrame(welcomePrompt);
       }, 800);
     } catch (err) {
-      console.warn('Screen capture cancelled or unavailable:', err);
+      console.warn('Capture cancelled or unavailable:', err);
     }
   };
 
@@ -193,11 +214,16 @@ export const ScreenMonitorDeck: React.FC<ScreenMonitorDeckProps> = ({
         ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
         const imageBase64 = canvas.toDataURL('image/jpeg', 0.82);
 
+        const defaultPrompt =
+          captureSource === 'webcam'
+            ? 'Live optical webcam eye scan: observe the user, facial expressions, emotion, gestures, physical paperwork/notes shown to camera, and workstation environment.'
+            : 'Live continuous screen scan: identify active window, detect all UI buttons/controls, and auto-fix any issues.';
+
         const prompt =
           promptOverride ||
           customPrompt.trim() ||
           oneShotMission ||
-          'Live continuous screen scan: identify active window, detect all UI buttons/controls, and auto-fix any issues.';
+          defaultPrompt;
 
         const res = await fetch('/api/admin/screen-analyze', {
           method: 'POST',
@@ -465,7 +491,8 @@ export const ScreenMonitorDeck: React.FC<ScreenMonitorDeckProps> = ({
                   <div className="w-full h-full border border-cyan-500/15 grid grid-cols-3 grid-rows-3 opacity-30" />
                   <div className="absolute top-3 left-3 text-[9px] text-cyan-400 bg-black/70 px-2 py-0.5 rounded border border-cyan-500/30 flex items-center gap-2">
                     <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
-                    <span>ACTIVE APP: {activeAnalysis?.appName || 'SCREEN DETECTING...'}</span>
+                    <span>SOURCE: {captureSource === 'webcam' ? 'LAPTOP WEBCAM EYE' : 'DESKTOP MONITOR'}</span>
+                    <span>| ACTIVE: {activeAnalysis?.appName || 'DETECTING...'}</span>
                     <span>| SCANS: {scansCount}</span>
                   </div>
 
@@ -473,7 +500,9 @@ export const ScreenMonitorDeck: React.FC<ScreenMonitorDeckProps> = ({
                     <div className="absolute inset-0 bg-cyan-500/10 backdrop-blur-[1px] flex flex-col items-center justify-center gap-2">
                       <div className="w-16 h-16 rounded-full border-2 border-cyan-400 border-dashed animate-spin" />
                       <span className="text-xs font-bold text-cyan-200 bg-black/85 px-3 py-1.5 rounded-xl border border-cyan-400 shadow-[0_0_20px_#00f0ff]">
-                        AI OPTICAL EYE SCANNING APP & UI CONTROLS...
+                        {captureSource === 'webcam'
+                          ? 'AI OPTICAL WEBCAM EYE SCANNING USER & ENVIRONMENT...'
+                          : 'AI OPTICAL EYE SCANNING APP & UI CONTROLS...'}
                       </span>
                     </div>
                   )}
@@ -486,31 +515,52 @@ export const ScreenMonitorDeck: React.FC<ScreenMonitorDeckProps> = ({
                     autoPlay
                     playsInline
                     muted
-                    className={`w-full h-full object-contain ${!isCapturing ? 'hidden' : ''}`}
+                    className={`w-full h-full object-contain ${captureSource === 'webcam' ? 'transform scale-x-[-1]' : ''} ${!isCapturing ? 'hidden' : ''}`}
                   />
                   <canvas ref={canvasRef} className="hidden" />
 
                   {!isCapturing && (
-                    <div className="p-6 text-center space-y-3 z-15">
-                      <div className="w-16 h-16 mx-auto rounded-2xl bg-cyan-950/70 border-2 border-dashed border-cyan-400 flex items-center justify-center text-cyan-300 shadow-[0_0_25px_rgba(0,240,255,0.2)]">
-                        <Monitor className="w-8 h-8" />
+                    <div className="p-6 text-center space-y-4 z-15 max-w-md">
+                      <div className="flex items-center justify-center gap-4">
+                        <div className="w-14 h-14 rounded-2xl bg-cyan-950/70 border-2 border-cyan-400/50 flex items-center justify-center text-cyan-300 shadow-[0_0_20px_rgba(0,240,255,0.2)]">
+                          <Monitor className="w-7 h-7" />
+                        </div>
+                        <div className="w-14 h-14 rounded-2xl bg-emerald-950/70 border-2 border-emerald-400/50 flex items-center justify-center text-emerald-300 shadow-[0_0_20px_rgba(16,185,129,0.2)]">
+                          <Camera className="w-7 h-7" />
+                        </div>
                       </div>
+
                       <div>
-                        <h3 className="text-base font-bold text-cyan-200">
-                          NO ACTIVE DESKTOP/APP FEED LINKED
+                        <h3 className="text-base font-bold text-cyan-200 uppercase tracking-wider">
+                          OPTICAL SENSORY EYE STANDBY
                         </h3>
-                        <p className="text-xs text-cyan-300/70 max-w-sm mt-1 font-sans">
-                          Link any window, website, or entire screen. Stonic AI will maintain a 24/7
-                          lifetime watch, inspect every UI button, and auto-pilot the workflow.
+                        <p className="text-xs text-cyan-300/70 mt-1 font-sans">
+                          Select sensory feed: Monitor entire desktop / app windows, or activate the Laptop Webcam Eye to allow Stonic AI to see you, observe your work notes, and understand your environment.
                         </p>
                       </div>
-                      <button
-                        onClick={handleStartCapture}
-                        className="px-6 py-2.5 rounded-xl bg-cyan-500 text-slate-950 font-bold text-xs hover:bg-cyan-400 shadow-[0_0_25px_#00f0ff] transition-all cursor-pointer flex items-center gap-2 mx-auto"
-                      >
-                        <Play className="w-4 h-4 fill-slate-950" />
-                        <span>LINK SCREEN & START LIFETIME WATCH</span>
-                      </button>
+
+                      <div className="flex flex-col sm:flex-row items-center justify-center gap-2 pt-2">
+                        <button
+                          onClick={() => {
+                            setCaptureSource('screen');
+                            handleStartCapture('screen');
+                          }}
+                          className="w-full sm:w-auto px-4 py-2.5 rounded-xl bg-cyan-500 text-slate-950 font-bold text-xs hover:bg-cyan-400 shadow-[0_0_20px_#00f0ff] transition-all cursor-pointer flex items-center justify-center gap-2"
+                        >
+                          <Monitor className="w-4 h-4 fill-slate-950" />
+                          <span>LINK DESKTOP SCREEN</span>
+                        </button>
+                        <button
+                          onClick={() => {
+                            setCaptureSource('webcam');
+                            handleStartCapture('webcam');
+                          }}
+                          className="w-full sm:w-auto px-4 py-2.5 rounded-xl bg-emerald-500 text-slate-950 font-bold text-xs hover:bg-emerald-400 shadow-[0_0_20px_rgba(16,185,129,0.8)] transition-all cursor-pointer flex items-center justify-center gap-2"
+                        >
+                          <Camera className="w-4 h-4" />
+                          <span>ACTIVATE WEBCAM EYE</span>
+                        </button>
+                      </div>
                     </div>
                   )}
                 </div>
@@ -518,21 +568,59 @@ export const ScreenMonitorDeck: React.FC<ScreenMonitorDeckProps> = ({
                 {/* Live Controls Bar */}
                 <div className="p-2.5 border-t border-cyan-500/20 bg-[#030e18] flex flex-wrap items-center justify-between gap-2 text-xs shrink-0 z-20 select-none">
                   <div className="flex items-center gap-2">
+                    {/* Source Switcher */}
+                    <div className="flex items-center bg-[#010912] p-0.5 rounded-lg border border-cyan-500/30 text-[11px]">
+                      <button
+                        onClick={() => {
+                          if (captureSource !== 'screen') {
+                            setCaptureSource('screen');
+                            if (isCapturing) {
+                              handleStopCapture();
+                              setTimeout(() => handleStartCapture('screen'), 300);
+                            }
+                          }
+                        }}
+                        className={`px-2 py-1 rounded transition-colors cursor-pointer flex items-center gap-1 ${
+                          captureSource === 'screen' ? 'bg-cyan-500 text-slate-950 font-bold' : 'text-cyan-400 hover:text-white'
+                        }`}
+                      >
+                        <Monitor className="w-3 h-3" />
+                        <span>SCREEN</span>
+                      </button>
+                      <button
+                        onClick={() => {
+                          if (captureSource !== 'webcam') {
+                            setCaptureSource('webcam');
+                            if (isCapturing) {
+                              handleStopCapture();
+                              setTimeout(() => handleStartCapture('webcam'), 300);
+                            }
+                          }
+                        }}
+                        className={`px-2 py-1 rounded transition-colors cursor-pointer flex items-center gap-1 ${
+                          captureSource === 'webcam' ? 'bg-emerald-500 text-slate-950 font-bold' : 'text-cyan-400 hover:text-white'
+                        }`}
+                      >
+                        <Camera className="w-3 h-3" />
+                        <span>WEBCAM</span>
+                      </button>
+                    </div>
+
                     {isCapturing ? (
                       <button
                         onClick={handleStopCapture}
                         className="px-3 py-1.5 rounded-lg bg-red-950/80 border border-red-500 text-red-300 hover:bg-red-900 flex items-center gap-1.5 cursor-pointer text-xs"
                       >
                         <Square className="w-3.5 h-3.5 fill-red-400" />
-                        <span>DISCONNECT FEED</span>
+                        <span>DISCONNECT</span>
                       </button>
                     ) : (
                       <button
-                        onClick={handleStartCapture}
+                        onClick={() => handleStartCapture()}
                         className="px-3 py-1.5 rounded-lg bg-emerald-950/80 border border-emerald-500 text-emerald-300 hover:bg-emerald-900 flex items-center gap-1.5 cursor-pointer text-xs font-bold"
                       >
                         <Play className="w-3.5 h-3.5 fill-emerald-400" />
-                        <span>CONNECT SCREEN</span>
+                        <span>START FEED</span>
                       </button>
                     )}
 
@@ -546,7 +634,7 @@ export const ScreenMonitorDeck: React.FC<ScreenMonitorDeckProps> = ({
                       ) : (
                         <Camera className="w-3.5 h-3.5 text-cyan-300" />
                       )}
-                      <span>SCAN SCREEN NOW</span>
+                      <span>{captureSource === 'webcam' ? 'SCAN WEBCAM NOW' : 'SCAN SCREEN NOW'}</span>
                     </button>
                   </div>
 

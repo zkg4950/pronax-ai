@@ -201,3 +201,98 @@ export interface EmotionAnalysis {
   recommendedTone: string;
   agentEmpathyQuote: string;
 }
+
+export type MemoryCategory =
+  | 'conversation'
+  | 'project'
+  | 'preference'
+  | 'decision'
+  | 'task_result'
+  | 'error_fix';
+
+export interface MemoryItem {
+  id: string;
+  title: string;
+  content: string;
+  category: MemoryCategory;
+  tags: string[];
+  createdAt: string;
+  lastAccessedAt?: string;
+  isImportant?: boolean;
+  relevanceScore?: number;
+}
+
+export type TaskStatus =
+  | 'PLANNING'
+  | 'READY'
+  | 'RUNNING'
+  | 'WAITING_FOR_APPROVAL'
+  | 'BLOCKED'
+  | 'COMPLETED'
+  | 'FAILED'
+  | 'CANCELLED';
+
+export interface TaskStep {
+  id: string;
+  title: string;
+  status: 'PENDING' | 'RUNNING' | 'COMPLETED' | 'FAILED';
+  output?: string;
+  assignedAgent?: 'alice' | 'bob' | 'carol' | 'dave';
+  completedAt?: string;
+}
+
+export interface ContinuousTask {
+  id: string;
+  title: string;
+  description: string;
+  projectName: string;
+  assignedAgent: 'alice' | 'bob' | 'carol' | 'dave';
+  status: TaskStatus;
+  progress: number; // 0 - 100
+  createdAt: string;
+  updatedAt: string;
+  steps: TaskStep[];
+  currentStepIndex: number;
+  requiresApproval?: boolean;
+  approvalPrompt?: string;
+  executionLogs: string[];
+  finalResult?: string;
+  error?: string;
+}
+
+export interface SecurityEventItem {
+  id: string;
+  timestamp: string;
+  type: 'LOGIN_FAILURE' | 'PORT_PROBE' | 'CONFIG_MISMATCH' | 'SUSPICIOUS_GEO' | 'UNUSUAL_VOLUME';
+  severity: 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL';
+  sourceIp: string;
+  details: string;
+  affectedTarget: string;
+  status: 'DETECTED' | 'INVESTIGATING' | 'MITIGATED' | 'RESOLVED';
+  remediation: string;
+}
+
+export interface AppUserAccount {
+  id: string;
+  username: string;
+  email: string;
+  role: 'User' | 'Moderator' | 'Admin' | 'Developer';
+  status: 'ACTIVE' | 'FLAGGED' | 'RESTRICTED' | 'BANNED';
+  riskScore: number; // 0 - 100
+  lastLogin: string;
+  ipAddress: string;
+  failedLoginsCount: number;
+  reasonForRestriction?: string;
+}
+
+export interface AdminAuditRecord {
+  id: string;
+  timestamp: string;
+  action: 'FLAG_USER' | 'RESTRICT_USER' | 'BAN_USER' | 'UNBAN_USER' | 'SECURITY_RULE_ENFORCED' | 'PERMISSION_CHANGE';
+  target: string;
+  executedBy: string;
+  justification: string;
+  evidence: string;
+  policyReference: string;
+}
+

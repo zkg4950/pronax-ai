@@ -115,7 +115,7 @@ export default function App() {
   const [rightWidth, setRightWidth] = useState(330);
   const [neuralCoreHeightRatio, setNeuralCoreHeightRatio] = useState(0.48);
 
-  const [maximizedPanel, setMaximizedPanel] = useState<'left' | 'neural' | 'agents' | 'right' | null>(null);
+  const [maximizedPanel, setMaximizedPanel] = useState<'left' | 'neural' | 'agents' | 'right' | null>('agents');
   const [activeMobileTab, setActiveMobileTab] = useState<'satlink' | 'neural' | 'agents' | 'voice'>('agents');
   const [isCompactScreen, setIsCompactScreen] = useState(false);
 
@@ -737,6 +737,7 @@ export default function App() {
                 }}
                 onToggleExpand={() => setMaximizedPanel('agents')}
                 externalTaskTrigger={externalTaskTrigger}
+                onOpenScreenMonitor={() => setIsScreenMonitorOpen(true)}
               />
             </div>
           </div>
