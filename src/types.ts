@@ -84,6 +84,8 @@ export interface BrainConfig {
   voiceSpeed: number;
   voicePitch: number;
   voiceLanguage: string;
+  voiceEngine?: 'gemini_neural' | 'browser_native';
+  voiceClarityBoost?: boolean;
   screenMonitorInterval: number;
   temperature: number;
 }
@@ -143,7 +145,6 @@ export interface SecurityBreachEvent {
   preventedAction: string;
 }
 
-
 export interface OwnerSecurityProfile {
   ownerName: string;
   isEnrolled: boolean;
@@ -157,3 +158,46 @@ export interface OwnerSecurityProfile {
   customVoiceWarning: string;
 }
 
+export interface CryptoAsset {
+  symbol: string;
+  name: string;
+  price: number;
+  change24h: number;
+  high24h: number;
+  low24h: number;
+  volume: string;
+  rsi: number;
+  macd: 'bullish' | 'bearish' | 'neutral';
+  trend: 'STRONG_BUY' | 'BUY' | 'NEUTRAL' | 'SELL' | 'STRONG_SELL';
+  support: number;
+  resistance: number;
+  marketCap: string;
+  sparkline: number[];
+}
+
+export interface CryptoMarketingCampaign {
+  id?: string;
+  tokenSymbol: string;
+  narrative: string;
+  audience: 'degen' | 'institutional' | 'solana_community' | 'general';
+  platform: 'twitter' | 'telegram' | 'kol_pitch' | 'meme_viral';
+  content: string;
+  generatedAt?: string;
+}
+
+export type UserEmotion =
+  | 'worried_anxious'
+  | 'excited_bullish'
+  | 'frustrated_angry'
+  | 'curious_analytical'
+  | 'neutral_chill';
+
+export interface EmotionAnalysis {
+  emotion: UserEmotion;
+  label: string;
+  emoji: string;
+  confidence: number;
+  triggerWords: string[];
+  recommendedTone: string;
+  agentEmpathyQuote: string;
+}
